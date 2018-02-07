@@ -2,6 +2,7 @@ package gorouter
 
 import (
 	"net/http"
+	"strings"
 )
 
 type (
@@ -11,65 +12,85 @@ type (
 	}
 
 	Node struct {
-		Char     rune
+		Key      string
 		Path     string
 		Handle   http.HandlerFunc
 		depth    int
-		children map[rune]*Node
+		children map[string]*Node
 		isLeaf   bool
 	}
 )
 
-func NewNode(char rune, depth int) *Node {
+func NewNode(key string, depth int) *Node {
 	return &Node{
-		Char:     char,
+		Key:      key,
 		depth:    depth,
-		children: make(map[rune]*Node),
+		children: make(map[string]*Node),
 	}
 }
 
 func NewTree() *Tree {
 	return &Tree{
-		root: NewNode(' ', 1),
+		root: NewNode("/", 1),
 		size: 1,
 	}
 }
 
-func (tree *Tree) Add(key string, handle http.HandlerFunc) {
+func (tree *Tree) Add(pattern string, handle http.HandlerFunc) {
 	var parent = tree.root
-	allChars := []rune(key)
-	for _, char := range allChars {
-		node, ok := parent.children[char]
 
-		if !ok {
-			node = NewNode(char, parent.depth+1)
-			parent.children[char] = node
+	if pattern != parent.Key {
+
+		pattern = trimPathPrefix(pattern)
+		res := splitPattern(pattern)
+
+		for _, key := range res {
+			node, ok := parent.children[key]
+
+			if !ok {
+				node = NewNode(key, parent.depth+1)
+
+				parent.children[key] = node
+			}
+
+			parent = node
 		}
 
-		parent = node
 	}
 
 	parent.Handle = handle
 	parent.isLeaf = true
-	parent.Path = key
+	parent.Path = pattern
 }
 
-func (tree *Tree) Find(key string) (nodes []*Node) {
+func (tree *Tree) Find(pattern string, isRegex int) (nodes []*Node) {
 	var (
 		node  = tree.root
 		queue []*Node
 	)
 
-	allChars := []rune(key)
+	if pattern == node.Path {
+		nodes = append(nodes, node)
+		return
+	}
 
-	for _, char := range allChars {
+	if isRegex == 0 {
+		pattern = trimPathPrefix(pattern)
+	}
 
-		child, ok := node.children[char]
+	res := splitPattern(pattern)
+	for _, key := range res {
+
+		child, ok := node.children[key]
 		if !ok {
 			return
 		}
-		node = child
 
+		if pattern == child.Path && isRegex == 0 {
+			nodes = append(nodes, child)
+			return
+		}
+		node = child
 	}
 
 	queue = append(queue, node)
@@ -90,4 +111,12 @@ func (tree *Tree) Find(key string) (nodes []*Node) {
 	}
 
 	return
+}
+
+func trimPathPrefix(pattern string) string {
+	return strings.TrimPrefix(pattern, "/")
+}
+
+func splitPattern(pattern string) []string {
+	return strings.Split(pattern, "/")
 }

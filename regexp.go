@@ -8,6 +8,7 @@ import (
 var (
 	defaultPattern = `[\w]+`
 	idPattern      = `[\d]+`
+	idKey          = `id`
 )
 
 func Match(requestUrl string, path string) (bool, map[string]string) {
@@ -41,7 +42,7 @@ func Match(requestUrl string, path string) (bool, map[string]string) {
 				res := strings.Split(matchStr, ":")
 				matchName = append(matchName, res[1])
 
-				if res[1] == "id" {
+				if res[1] == idKey {
 					sTemp = sTemp + "/" + "(" + idPattern + ")"
 				} else {
 					sTemp = sTemp + "/" + "(" + defaultPattern + ")"

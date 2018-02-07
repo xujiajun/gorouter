@@ -54,14 +54,20 @@ func (router *Router) Handle(method string, path string, handle http.HandlerFunc
 func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	requestUrl := r.URL.Path
-	nodes := router.trees[r.Method].Find(requestUrl)
+	nodes := router.trees[r.Method].Find(requestUrl, 0)
 
 	for _, node := range nodes {
 
 		handler := node.Handle
+		path := node.Path
 
 		if handler != nil {
-			if node.Path == requestUrl {
+			if path == requestUrl {
+				handler(w, r)
+				return
+			}
+
+			if path == requestUrl[1:] {
 				handler(w, r)
 				return
 			}
@@ -69,11 +75,10 @@ func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if nodes == nil {
-		// find again
 		res := strings.Split(requestUrl, "/")
-		prefix := "/" + res[0]
+		prefix := res[1]
 
-		nodes := router.trees[r.Method].Find(prefix)
+		nodes := router.trees[r.Method].Find(prefix, 1)
 
 		for _, node := range nodes {
 			handler := node.Handle
