@@ -8,22 +8,22 @@ import (
 type (
 	Tree struct {
 		root *Node
-		size int
 	}
 
 	Node struct {
-		Key      string
-		Path     string
-		Handle   http.HandlerFunc
-		depth    int
-		children map[string]*Node
-		isLeaf   bool
+		key        string
+		path       string
+		handle     http.HandlerFunc
+		depth      int
+		children   map[string]*Node
+		isLeaf     bool
+		middleware []middlewareType
 	}
 )
 
 func NewNode(key string, depth int) *Node {
 	return &Node{
-		Key:      key,
+		key:      key,
 		depth:    depth,
 		children: make(map[string]*Node),
 	}
@@ -32,14 +32,13 @@ func NewNode(key string, depth int) *Node {
 func NewTree() *Tree {
 	return &Tree{
 		root: NewNode("/", 1),
-		size: 1,
 	}
 }
 
-func (tree *Tree) Add(pattern string, handle http.HandlerFunc) {
+func (tree *Tree) Add(pattern string, handle http.HandlerFunc, middleware ...middlewareType) {
 	var parent = tree.root
 
-	if pattern != parent.Key {
+	if pattern != parent.key {
 
 		pattern = trimPathPrefix(pattern)
 		res := splitPattern(pattern)
@@ -49,6 +48,9 @@ func (tree *Tree) Add(pattern string, handle http.HandlerFunc) {
 
 			if !ok {
 				node = NewNode(key, parent.depth+1)
+				if len(middleware) > 0 {
+					node.middleware = append(node.middleware, middleware...)
+				}
 
 				parent.children[key] = node
 			}
@@ -57,10 +59,13 @@ func (tree *Tree) Add(pattern string, handle http.HandlerFunc) {
 		}
 
 	}
-
-	parent.Handle = handle
+	if len(middleware) > 0 && parent.depth == 1 {
+		parent.middleware = append(parent.middleware, middleware...)
+	}
+	parent.handle = handle
 	parent.isLeaf = true
-	parent.Path = pattern
+	parent.path = pattern
+
 }
 
 func (tree *Tree) Find(pattern string, isRegex int) (nodes []*Node) {
@@ -69,7 +74,7 @@ func (tree *Tree) Find(pattern string, isRegex int) (nodes []*Node) {
 		queue []*Node
 	)
 
-	if pattern == node.Path {
+	if pattern == node.path {
 		nodes = append(nodes, node)
 		return
 	}
@@ -86,7 +91,7 @@ func (tree *Tree) Find(pattern string, isRegex int) (nodes []*Node) {
 			return
 		}
 
-		if pattern == child.Path && isRegex == 0 {
+		if pattern == child.path && isRegex == 0 {
 			nodes = append(nodes, child)
 			return
 		}

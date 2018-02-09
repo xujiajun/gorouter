@@ -5,10 +5,21 @@ import (
 	"context"
 	"strings"
 	"fmt"
+	"regexp"
 )
 
+var (
+	defaultPattern = `[\w]+`
+	idPattern      = `[\d]+`
+	idKey          = `id`
+)
+
+type middlewareType func(next http.HandlerFunc) http.HandlerFunc
+
 type Router struct {
-	trees map[string]*Tree
+	prefix     string
+	middleware []middlewareType
+	trees      map[string]*Tree
 }
 
 func New() *Router {
@@ -33,6 +44,18 @@ func (router *Router) PUT(path string, handle http.HandlerFunc) {
 	router.Handle(http.MethodPut, path, handle)
 }
 
+func (router *Router) PATCH(path string, handle http.HandlerFunc) {
+	router.Handle(http.MethodPatch, path, handle)
+}
+
+func (router *Router) Group(prefix string) *Router {
+	return &Router{
+		prefix: prefix,
+		trees:  router.trees,
+		middleware: router.middleware,
+	}
+}
+
 func (router *Router) Handle(method string, path string, handle http.HandlerFunc) {
 	if method == "" {
 		panic(fmt.Errorf("invalid method"))
@@ -48,27 +71,30 @@ func (router *Router) Handle(method string, path string, handle http.HandlerFunc
 		router.trees[method] = root
 	}
 
-	root.Add(path, handle)
+	if router.prefix != "" {
+		path = router.prefix + "/" + path
+	}
+
+	root.Add(path, handle, router.middleware...)
 }
 
 func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-
 	requestUrl := r.URL.Path
 	nodes := router.trees[r.Method].Find(requestUrl, 0)
 
 	for _, node := range nodes {
 
-		handler := node.Handle
-		path := node.Path
+		handler := node.handle
+		path := node.path
 
 		if handler != nil {
 			if path == requestUrl {
-				handler(w, r)
+				handle(w, r, handler, node.middleware)
 				return
 			}
 
 			if path == requestUrl[1:] {
-				handler(w, r)
+				handle(w, r, handler, node.middleware)
 				return
 			}
 		}
@@ -81,17 +107,17 @@ func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		nodes := router.trees[r.Method].Find(prefix, 1)
 
 		for _, node := range nodes {
-			handler := node.Handle
+			handler := node.handle
 
-			if handler != nil && node.Path != requestUrl {
-				isMatch, matchParams := Match(requestUrl, node.Path)
+			if handler != nil && node.path != requestUrl {
+				isMatch, matchParams := Match(requestUrl, node.path)
 				if isMatch {
 					for k, v := range matchParams {
 						ctx := context.WithValue(r.Context(), k, v)
 						r = r.WithContext(ctx)
 					}
 
-					handler(w, r)
+					handle(w, r, handler, node.middleware)
 					return
 				}
 			}
@@ -103,4 +129,78 @@ func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	http.NotFound(w, r)
 	return
+}
+
+func (router *Router) Use(middleware ...middlewareType) {
+	if len(middleware) > 0 {
+		router.middleware = append(router.middleware, middleware...)
+	}
+}
+
+func handle(w http.ResponseWriter, r *http.Request, handler http.HandlerFunc, middleware []middlewareType) {
+	var baseHandler = handler
+	for _, m := range middleware {
+		baseHandler = m(baseHandler)
+	}
+	baseHandler(w, r)
+}
+
+func Match(requestUrl string, path string) (bool, map[string]string) {
+	res := strings.Split(path, "/")
+	if res == nil {
+		return false, nil
+	}
+
+	var (
+		matchName   []string
+		matchParams map[string]string
+		sTemp       string
+	)
+
+	matchParams = make(map[string]string)
+
+	for _, str := range res {
+
+		if str != "" {
+			r := []byte(str)
+
+			if string(r[0]) == "{" && string(r[len(r)-1]) == "}" {
+				matchStr := string(r[1:len(r)-1])
+				res := strings.Split(matchStr, ":")
+
+				matchName = append(matchName, res[0])
+
+				sTemp = sTemp + "/" + "(" + res[1] + ")"
+			} else if string(r[0]) == ":" {
+				matchStr := string(r)
+				res := strings.Split(matchStr, ":")
+				matchName = append(matchName, res[1])
+
+				if res[1] == idKey {
+					sTemp = sTemp + "/" + "(" + idPattern + ")"
+				} else {
+					sTemp = sTemp + "/" + "(" + defaultPattern + ")"
+				}
+			} else {
+				sTemp = sTemp + "/" + str
+			}
+		}
+	}
+
+	pattern := sTemp
+
+	re := regexp.MustCompile(pattern)
+	submatch := re.FindSubmatch([]byte(requestUrl))
+
+	if submatch != nil {
+		if string(submatch[0]) == requestUrl {
+			submatch = submatch[1:]
+			for k, v := range submatch {
+				matchParams[matchName[k]] = string(v)
+			}
+			return true, matchParams
+		}
+	}
+
+	return false, nil
 }
