@@ -20,6 +20,7 @@ type Router struct {
 	prefix     string
 	middleware []middlewareType
 	trees      map[string]*Tree
+	notFound   http.HandlerFunc
 }
 
 func New() *Router {
@@ -50,10 +51,14 @@ func (router *Router) PATCH(path string, handle http.HandlerFunc) {
 
 func (router *Router) Group(prefix string) *Router {
 	return &Router{
-		prefix: prefix,
-		trees:  router.trees,
+		prefix:     prefix,
+		trees:      router.trees,
 		middleware: router.middleware,
 	}
+}
+
+func (router *Router) NotFoundFunc(handler http.HandlerFunc) {
+	router.notFound = handler
 }
 
 func (router *Router) Handle(method string, path string, handle http.HandlerFunc) {
@@ -123,17 +128,21 @@ func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		http.NotFound(w, r)
-		return
+		router.HandleNotFound(w, r)
 	}
-
-	http.NotFound(w, r)
-	return
 }
 
 func (router *Router) Use(middleware ...middlewareType) {
 	if len(middleware) > 0 {
 		router.middleware = append(router.middleware, middleware...)
+	}
+}
+
+func (router *Router) HandleNotFound(w http.ResponseWriter, r *http.Request) {
+	if router.notFound != nil {
+		router.notFound.ServeHTTP(w, r)
+	} else {
+		http.NotFound(w, r)
 	}
 }
 
