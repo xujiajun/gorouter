@@ -8,11 +8,12 @@ I wanted a simple, fast router that has no unnecessary overhead using the standa
 ## Features
 
 * Fast
-* URL Parameters
-* Regex Parameters
-* Routes Groups
+* URL parameters
+* Regex parameters
+* Routes groups
 * Custom NotFoundHandler
-* Middleware Chain Support
+* Middleware chain Support
+* No external dependencies (just Go 1.7+ stdlib)
 
 
 ## Installation
