@@ -14,14 +14,16 @@ var (
 	idKey          = `id`
 )
 
-type middlewareType func(next http.HandlerFunc) http.HandlerFunc
+type (
+	middlewareType func(next http.HandlerFunc) http.HandlerFunc
 
-type Router struct {
-	prefix     string
-	middleware []middlewareType
-	trees      map[string]*Tree
-	notFound   http.HandlerFunc
-}
+	Router struct {
+		prefix     string
+		middleware []middlewareType
+		trees      map[string]*Tree
+		notFound   http.HandlerFunc
+	}
+)
 
 func New() *Router {
 	return &Router{
@@ -83,6 +85,30 @@ func (router *Router) Handle(method string, path string, handle http.HandlerFunc
 	root.Add(path, handle, router.middleware...)
 }
 
+// GetParam return route param stored in r.
+func GetParam(r *http.Request, key string) string {
+	return GetAllParams(r)[key]
+}
+
+// contextKeyType is a private struct that is used for storing values in net.Context
+type contextKeyType struct{}
+
+// contextKey is the key that is used to store values in the net.Context for each request
+var contextKey = contextKeyType{}
+
+// paramsMapType is a private type that is used to store route params
+type paramsMapType map[string]string
+
+// GetAllParams return all route params stored in r.
+func GetAllParams(r *http.Request) paramsMapType {
+	values, ok := r.Context().Value(contextKey).(paramsMapType)
+	if ok {
+		return values
+	}
+
+	return paramsMapType{}
+}
+
 func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	requestUrl := r.URL.Path
 	nodes := router.trees[r.Method].Find(requestUrl, 0)
@@ -115,21 +141,18 @@ func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			handler := node.handle
 
 			if handler != nil && node.path != requestUrl {
-				isMatch, matchParams := Match(requestUrl, node.path)
-				if isMatch {
-					for k, v := range matchParams {
-						ctx := context.WithValue(r.Context(), k, v)
-						r = r.WithContext(ctx)
-					}
 
+				if matchParamsMap, ok := router.matchAndParse(requestUrl, node.path); ok {
+					ctx := context.WithValue(r.Context(), contextKey, matchParamsMap)
+					r = r.WithContext(ctx)
 					handle(w, r, handler, node.middleware)
 					return
 				}
 			}
 		}
-
-		router.HandleNotFound(w, r)
 	}
+
+	router.HandleNotFound(w, r)
 }
 
 func (router *Router) Use(middleware ...middlewareType) {
@@ -154,19 +177,23 @@ func handle(w http.ResponseWriter, r *http.Request, handler http.HandlerFunc, mi
 	baseHandler(w, r)
 }
 
-func Match(requestUrl string, path string) (bool, map[string]string) {
+func (router *Router) Match(requestUrl string, path string) bool {
+	_, ok := router.matchAndParse(requestUrl, path)
+	return ok
+}
+
+func (router *Router) matchAndParse(requestUrl string, path string) (paramsMapType, bool) {
 	res := strings.Split(path, "/")
 	if res == nil {
-		return false, nil
+		return nil, false
 	}
 
 	var (
-		matchName   []string
-		matchParams map[string]string
-		sTemp       string
+		matchName []string
+		sTemp     string
 	)
 
-	matchParams = make(map[string]string)
+	matchParams := make(paramsMapType)
 
 	for _, str := range res {
 
@@ -207,9 +234,9 @@ func Match(requestUrl string, path string) (bool, map[string]string) {
 			for k, v := range submatch {
 				matchParams[matchName[k]] = string(v)
 			}
-			return true, matchParams
+			return matchParams, true
 		}
 	}
 
-	return false, nil
+	return nil, false
 }
