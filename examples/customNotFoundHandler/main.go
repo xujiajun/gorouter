@@ -1,10 +1,10 @@
 package main
 
 import (
+	"fmt"
+	"github.com/xujiajun/gorouter"
 	"log"
 	"net/http"
-	"github.com/xujiajun/gorouter"
-	"fmt"
 )
 
 func notFoundFunc(w http.ResponseWriter, r *http.Request) {
