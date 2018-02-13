@@ -1,4 +1,4 @@
-# gorouter
+# gorouter  [![GoDoc](https://godoc.org/github.com/xujiajun/gorouter?status.svg)](https://godoc.org/github.com/xujiajun/gorouter)
 A simple and fast HTTP router for Go.
 
 ## Motivation
