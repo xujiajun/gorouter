@@ -152,7 +152,7 @@ func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	router.HandleNotFound(w, r)
+	router.HandleNotFound(w, r, router.middleware)
 }
 
 func (router *Router) Use(middleware ...middlewareType) {
@@ -161,9 +161,10 @@ func (router *Router) Use(middleware ...middlewareType) {
 	}
 }
 
-func (router *Router) HandleNotFound(w http.ResponseWriter, r *http.Request) {
+func (router *Router) HandleNotFound(w http.ResponseWriter, r *http.Request, middleware []middlewareType) {
 	if router.notFound != nil {
-		router.notFound.ServeHTTP(w, r)
+		handle(w, r, router.notFound, middleware)
+		return
 	} else {
 		http.NotFound(w, r)
 	}
