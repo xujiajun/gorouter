@@ -20,13 +20,13 @@ type (
 	// Router is a simple HTTP route multiplexer that parses a request path,
 	// records any URL params, and executes an end handler.
 	Router struct {
-		prefix     string
+		prefix string
 		// The middleware stack
 		middleware []middlewareType
 		// the tree routers
-		trees      map[string]*Tree
+		trees map[string]*Tree
 		// Custom route not found handler
-		notFound   http.HandlerFunc
+		notFound http.HandlerFunc
 	}
 )
 
@@ -187,9 +187,8 @@ func (router *Router) HandleNotFound(w http.ResponseWriter, r *http.Request, mid
 	if router.notFound != nil {
 		handle(w, r, router.notFound, middleware)
 		return
-	} else {
-		http.NotFound(w, r)
 	}
+	http.NotFound(w, r)
 }
 
 // handle execute middleware chain

@@ -6,17 +6,24 @@ import (
 )
 
 type (
+	// Tree records node
 	Tree struct {
 		root *Node
 	}
 
+	// Node records any URL params, and executes an end handler.
 	Node struct {
 		key        string
+		// path records a request path
 		path       string
 		handle     http.HandlerFunc
+		// depth records Node's depth
 		depth      int
+		// children records Node's children node
 		children   map[string]*Node
+		// isLeaf flag
 		isLeaf     bool
+		// middleware records middleware stack
 		middleware []middlewareType
 	}
 )
