@@ -47,13 +47,162 @@ func main() {
 
 ### URL Parameters
 
+```
+package main
+
+import (
+	"github.com/xujiajun/gorouter"
+	"log"
+	"net/http"
+)
+
+func main() {
+	mux := gorouter.New()
+	//url parameters match
+	mux.GET("/user/:id", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("match user/:id !"))
+	})
+
+	log.Fatal(http.ListenAndServe(":8181", mux))
+}
+```
+
 ### Regex Parameters
+
+```
+package main
+
+import (
+	"github.com/xujiajun/gorouter"
+	"log"
+	"net/http"
+)
+
+func main() {
+	mux := gorouter.New()
+	//url regex match
+	mux.GET("/user/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("match user/{id:[0-9]+} !"))
+	})
+
+	log.Fatal(http.ListenAndServe(":8181", mux))
+}
+```
+
 
 ### Group routes
 
+```
+package main
+
+import (
+	"fmt"
+	"github.com/xujiajun/gorouter"
+	"log"
+	"net/http"
+)
+
+func usersHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, "/api/users")
+}
+
+func main() {
+	mux := gorouter.New()
+	mux.Group("/api").GET("/users", usersHandler)
+
+	log.Fatal(http.ListenAndServe(":8181", mux))
+}
+```
+
 ### Custom NotFoundHandler
 
+```
+package main
+
+import (
+	"fmt"
+	"github.com/xujiajun/gorouter"
+	"log"
+	"net/http"
+)
+
+func notFoundFunc(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotFound)
+	fmt.Fprint(w, "404 page !!!")
+}
+
+func main() {
+	mux := gorouter.New()
+	mux.NotFoundFunc(notFoundFunc)
+	mux.GET("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("hello world"))
+	})
+
+	log.Fatal(http.ListenAndServe(":8181", mux))
+}
+```
+
 ### Middlewares
+
+```
+package main
+
+import (
+	"fmt"
+	"github.com/xujiajun/gorouter"
+	"log"
+	"net/http"
+)
+
+type statusRecorder struct {
+	http.ResponseWriter
+	status int
+}
+
+func (rec *statusRecorder) WriteHeader(code int) {
+	rec.status = code
+	rec.ResponseWriter.WriteHeader(code)
+}
+
+//https://upgear.io/blog/golang-tip-wrapping-http-response-writer-for-middleware/
+func withStatusRecord(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		rec := statusRecorder{w, http.StatusOK}
+		next.ServeHTTP(&rec, r)
+		log.Printf("response status: %v\n", rec.status)
+	}
+}
+
+func notFoundFunc(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotFound)
+	fmt.Fprint(w, "Not found page !")
+}
+
+func withLogging(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("Logged connection from %s", r.RemoteAddr)
+		next.ServeHTTP(w, r)
+	}
+}
+
+func withTracing(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("Tracing request for %s", r.RequestURI)
+		next.ServeHTTP(w, r)
+	}
+}
+
+func main() {
+	mux := gorouter.New()
+	mux.NotFoundFunc(notFoundFunc)
+	mux.Use(withLogging, withTracing, withStatusRecord)
+	mux.GET("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("hello world"))
+	})
+
+	log.Fatal(http.ListenAndServe(":8181", mux))
+}
+```
 
 ## Contributing
 
