@@ -13,16 +13,16 @@ type (
 
 	// Node records any URL params, and executes an end handler.
 	Node struct {
-		key        string
+		key string
 		// path records a request path
-		path       string
-		handle     http.HandlerFunc
+		path   string
+		handle http.HandlerFunc
 		// depth records Node's depth
-		depth      int
+		depth int
 		// children records Node's children node
-		children   map[string]*Node
+		children map[string]*Node
 		// isLeaf flag
-		isLeaf     bool
+		isLeaf bool
 		// middleware records middleware stack
 		middleware []middlewareType
 	}

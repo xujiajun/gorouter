@@ -1,11 +1,11 @@
 package gorouter
 
 import (
-	"net/http"
 	"context"
-	"strings"
 	"fmt"
+	"net/http"
 	"regexp"
+	"strings"
 )
 
 var (
@@ -226,7 +226,7 @@ func (router *Router) matchAndParse(requestUrl string, path string) (paramsMapTy
 			r := []byte(str)
 
 			if string(r[0]) == "{" && string(r[len(r)-1]) == "}" {
-				matchStr := string(r[1:len(r)-1])
+				matchStr := string(r[1 : len(r)-1])
 				res := strings.Split(matchStr, ":")
 
 				matchName = append(matchName, res[0])

@@ -1,15 +1,15 @@
 package gorouter_test
 
 import (
-	"testing"
-	"net/http"
 	"fmt"
-	"net/http/httptest"
 	"github.com/xujiajun/gorouter"
+	"net/http"
+	"net/http/httptest"
+	"testing"
 )
 
-func hiHandler(w http.ResponseWriter, r *http.Request)  {
-	fmt.Fprint(w,"hi,gorouter")
+func hiHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprint(w, "hi,gorouter")
 }
 
 func TestRouter_GET(t *testing.T) {
@@ -24,8 +24,8 @@ func TestRouter_GET(t *testing.T) {
 
 	router := gorouter.New()
 
-	router.GET("/hi",hiHandler)
-	router.ServeHTTP(rr,req)
+	router.GET("/hi", hiHandler)
+	router.ServeHTTP(rr, req)
 
 	expected := "hi,gorouter"
 
