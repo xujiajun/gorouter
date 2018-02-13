@@ -15,42 +15,59 @@ var (
 )
 
 type (
+	// middlewareType is a private type that is used for middleware
 	middlewareType func(next http.HandlerFunc) http.HandlerFunc
-
+	// Router is a simple HTTP route multiplexer that parses a request path,
+	// records any URL params, and executes an end handler.
 	Router struct {
 		prefix     string
+		// The middleware stack
 		middleware []middlewareType
+		// the tree routers
 		trees      map[string]*Tree
+		// Custom route not found handler
 		notFound   http.HandlerFunc
 	}
 )
 
+// New returns a newly initialized Router object that implements the Router
 func New() *Router {
 	return &Router{
 		trees: make(map[string]*Tree),
 	}
 }
 
+// GET adds the route `path` that matches a GET http method to
+// execute the `handle` http.HandlerFunc.
 func (router *Router) GET(path string, handle http.HandlerFunc) {
 	router.Handle(http.MethodGet, path, handle)
 }
 
+// POST adds the route `path` that matches a POST http method to
+// execute the `handle` http.HandlerFunc.
 func (router *Router) POST(path string, handle http.HandlerFunc) {
 	router.Handle(http.MethodPost, path, handle)
 }
 
+// DELETE adds the route `path` that matches a DELETE http method to
+// execute the `handle` http.HandlerFunc.
 func (router *Router) DELETE(path string, handle http.HandlerFunc) {
 	router.Handle(http.MethodDelete, path, handle)
 }
 
+// PUT adds the route `path` that matches a PUT http method to
+// execute the `handle` http.HandlerFunc.
 func (router *Router) PUT(path string, handle http.HandlerFunc) {
 	router.Handle(http.MethodPut, path, handle)
 }
 
+// PATCH adds the route `path` that matches a PATCH http method to
+// execute the `handle` http.HandlerFunc.
 func (router *Router) PATCH(path string, handle http.HandlerFunc) {
 	router.Handle(http.MethodPatch, path, handle)
 }
 
+// Group define routes groups If there is a path prefix that use `prefix`
 func (router *Router) Group(prefix string) *Router {
 	return &Router{
 		prefix:     prefix,
@@ -59,10 +76,12 @@ func (router *Router) Group(prefix string) *Router {
 	}
 }
 
+// NotFoundFunc registers a handler when the request route is not found
 func (router *Router) NotFoundFunc(handler http.HandlerFunc) {
 	router.notFound = handler
 }
 
+// Handle registers a new request handle with the given path and method.
 func (router *Router) Handle(method string, path string, handle http.HandlerFunc) {
 	if method == "" {
 		panic(fmt.Errorf("invalid method"))
@@ -109,6 +128,7 @@ func GetAllParams(r *http.Request) paramsMapType {
 	return paramsMapType{}
 }
 
+// ServeHTTP makes the router implement the http.Handler interface.
 func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	requestUrl := r.URL.Path
 	nodes := router.trees[r.Method].Find(requestUrl, 0)
@@ -155,12 +175,14 @@ func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	router.HandleNotFound(w, r, router.middleware)
 }
 
+// Use appends a middleware handler to the middleware stack.
 func (router *Router) Use(middleware ...middlewareType) {
 	if len(middleware) > 0 {
 		router.middleware = append(router.middleware, middleware...)
 	}
 }
 
+// HandleNotFound registers a handler when the request route is not found
 func (router *Router) HandleNotFound(w http.ResponseWriter, r *http.Request, middleware []middlewareType) {
 	if router.notFound != nil {
 		handle(w, r, router.notFound, middleware)
@@ -170,6 +192,7 @@ func (router *Router) HandleNotFound(w http.ResponseWriter, r *http.Request, mid
 	}
 }
 
+// handle execute middleware chain
 func handle(w http.ResponseWriter, r *http.Request, handler http.HandlerFunc, middleware []middlewareType) {
 	var baseHandler = handler
 	for _, m := range middleware {
@@ -178,11 +201,13 @@ func handle(w http.ResponseWriter, r *http.Request, handler http.HandlerFunc, mi
 	baseHandler(w, r)
 }
 
+// Match check if the request match the route Pattern
 func (router *Router) Match(requestUrl string, path string) bool {
 	_, ok := router.matchAndParse(requestUrl, path)
 	return ok
 }
 
+// matchAndParse check if the request matches the route path and returns a map of the parsed
 func (router *Router) matchAndParse(requestUrl string, path string) (paramsMapType, bool) {
 	res := strings.Split(path, "/")
 	if res == nil {

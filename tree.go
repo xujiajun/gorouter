@@ -21,6 +21,7 @@ type (
 	}
 )
 
+// NewNode returns a newly initialized Node object that implements the Node
 func NewNode(key string, depth int) *Node {
 	return &Node{
 		key:      key,
@@ -29,12 +30,14 @@ func NewNode(key string, depth int) *Node {
 	}
 }
 
+// NewTree returns a newly initialized Tree object that implements the Tree
 func NewTree() *Tree {
 	return &Tree{
 		root: NewNode("/", 1),
 	}
 }
 
+// Add use `pattern` 、handle、middleware stack as node register to tree
 func (tree *Tree) Add(pattern string, handle http.HandlerFunc, middleware ...middlewareType) {
 	var parent = tree.root
 
@@ -68,6 +71,7 @@ func (tree *Tree) Add(pattern string, handle http.HandlerFunc, middleware ...mid
 
 }
 
+// Find returns nodes that the request match the route pattern
 func (tree *Tree) Find(pattern string, isRegex int) (nodes []*Node) {
 	var (
 		node  = tree.root
@@ -118,10 +122,12 @@ func (tree *Tree) Find(pattern string, isRegex int) (nodes []*Node) {
 	return
 }
 
+// trimPathPrefix is short for strings.TrimPrefix with param prefix `/`
 func trimPathPrefix(pattern string) string {
 	return strings.TrimPrefix(pattern, "/")
 }
 
+// splitPattern is short for strings.Split with param seq `/`
 func splitPattern(pattern string) []string {
 	return strings.Split(pattern, "/")
 }
