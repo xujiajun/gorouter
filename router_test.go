@@ -8,29 +8,146 @@ import (
 	"testing"
 )
 
-func hiHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "hi,gorouter")
+var (
+	errorFormat, expected string
+)
+
+func init() {
+	expected = "hi,gorouter"
+	errorFormat = "handler returned unexpected body: got %v want %v"
 }
 
 func TestRouter_GET(t *testing.T) {
 
-	req, err := http.NewRequest("GET", "/hi", nil)
+	router := gorouter.New()
+
+	rr := httptest.NewRecorder()
+
+	req, err := http.NewRequest(http.MethodGet, "/hi", nil)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	rr := httptest.NewRecorder()
-
-	router := gorouter.New()
-
-	router.GET("/hi", hiHandler)
+	router.GET("/hi", func(w http.ResponseWriter, request *http.Request) {
+		fmt.Fprint(w, expected)
+	})
 	router.ServeHTTP(rr, req)
 
-	expected := "hi,gorouter"
+	if rr.Body.String() != expected {
+		t.Errorf(errorFormat,
+			rr.Body.String(), expected)
+	}
+}
+
+func TestRouter_POST(t *testing.T) {
+
+	router := gorouter.New()
+	rr := httptest.NewRecorder()
+
+	req, err := http.NewRequest(http.MethodPost, "/hi", nil)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	router.POST("/hi", func(w http.ResponseWriter, request *http.Request) {
+		fmt.Fprint(w, expected)
+	})
+	router.ServeHTTP(rr, req)
 
 	if rr.Body.String() != expected {
-		t.Errorf("handler returned unexpected body: got %v want %v",
+		t.Errorf(errorFormat,
+			rr.Body.String(), expected)
+	}
+}
+
+func TestRouter_DELETE(t *testing.T) {
+
+	router := gorouter.New()
+	rr := httptest.NewRecorder()
+
+	req, err := http.NewRequest(http.MethodDelete, "/hi", nil)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	router.DELETE("/hi", func(w http.ResponseWriter, request *http.Request) {
+		fmt.Fprint(w, expected)
+	})
+	router.ServeHTTP(rr, req)
+
+	if rr.Body.String() != expected {
+		t.Errorf(errorFormat,
+			rr.Body.String(), expected)
+	}
+}
+
+func TestRouter_PATCH(t *testing.T) {
+
+	router := gorouter.New()
+	rr := httptest.NewRecorder()
+
+	req, err := http.NewRequest(http.MethodPatch, "/hi", nil)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	router.PATCH("/hi", func(w http.ResponseWriter, request *http.Request) {
+		fmt.Fprint(w, expected)
+	})
+	router.ServeHTTP(rr, req)
+
+	if rr.Body.String() != expected {
+		t.Errorf(errorFormat,
+			rr.Body.String(), expected)
+	}
+}
+
+func TestRouter_PUT(t *testing.T) {
+
+	router := gorouter.New()
+	rr := httptest.NewRecorder()
+
+	req, err := http.NewRequest(http.MethodPut, "/hi", nil)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	router.PUT("/hi", func(w http.ResponseWriter, request *http.Request) {
+		fmt.Fprint(w, expected)
+	})
+	router.ServeHTTP(rr, req)
+
+	if rr.Body.String() != expected {
+		t.Errorf(errorFormat,
+			rr.Body.String(), expected)
+	}
+}
+
+func TestRouter_Group(t *testing.T) {
+	router := gorouter.New()
+
+	rr := httptest.NewRecorder()
+
+	prefix := "/api"
+
+	req, err := http.NewRequest(http.MethodGet, prefix+"/hi", nil)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	router.Group(prefix).GET("/hi", func(w http.ResponseWriter, request *http.Request) {
+		fmt.Fprint(w, expected)
+	})
+	router.ServeHTTP(rr, req)
+
+	if rr.Body.String() != expected {
+		t.Errorf(errorFormat,
 			rr.Body.String(), expected)
 	}
 }
