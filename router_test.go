@@ -3,10 +3,10 @@ package gorouter_test
 import (
 	"fmt"
 	"github.com/xujiajun/gorouter"
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"log"
 )
 
 var (
@@ -244,6 +244,56 @@ func TestRouter_Use(t *testing.T) {
 
 	router.Use(withLogging)
 	router.GET("/hi", func(w http.ResponseWriter, request *http.Request) {
+		fmt.Fprint(w, expected)
+	})
+	router.ServeHTTP(rr, req)
+
+	if rr.Body.String() != expected {
+		t.Errorf(errorFormat,
+			rr.Body.String(), expected)
+	}
+}
+
+func TestRouter_Regex(t *testing.T) {
+	router := gorouter.New()
+
+	rr := httptest.NewRecorder()
+
+	req, err := http.NewRequest(http.MethodGet, "/param/1", nil)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	router.GET("/param/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, expected)
+		id := gorouter.GetParam(r, "id")
+		if id != "1" {
+			t.Fatal("TestGetAllParams test fail")
+		}
+	})
+	router.ServeHTTP(rr, req)
+
+	if rr.Body.String() != expected {
+		t.Errorf(errorFormat,
+			rr.Body.String(), expected)
+	}
+}
+
+func TestRouter_HandleRoot(t *testing.T) {
+	router := gorouter.New()
+
+	rr := httptest.NewRecorder()
+
+	req, err := http.NewRequest(http.MethodGet, "/", nil)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := "hi,root"
+
+	router.GET("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, expected)
 	})
 	router.ServeHTTP(rr, req)
