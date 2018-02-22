@@ -148,7 +148,7 @@ func TestRouter_Group(t *testing.T) {
 	}
 }
 
-func TestRouter_HandleNotFound(t *testing.T) {
+func TestRouter_CustomHandleNotFound(t *testing.T) {
 	router := gorouter.New()
 
 	rr := httptest.NewRecorder()
@@ -172,7 +172,29 @@ func TestRouter_HandleNotFound(t *testing.T) {
 
 	if rr.Body.String() != customNotFoundStr {
 		t.Errorf(errorFormat,
-			rr.Body.String(), expected)
+			rr.Body.String(), customNotFoundStr)
+	}
+}
+
+func TestRouter_HandleNotFound(t *testing.T) {
+	router := gorouter.New()
+
+	rr := httptest.NewRecorder()
+
+	req, err := http.NewRequest(http.MethodGet, "/aaa", nil)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	router.GET("/aa", func(w http.ResponseWriter, request *http.Request) {
+		fmt.Fprint(w, expected)
+	})
+	router.ServeHTTP(rr, req)
+
+	if rr.Body.String()[:3] != "404" {
+		t.Errorf(errorFormat,
+			rr.Body.String(), "404 page not found\n")
 	}
 }
 
@@ -211,15 +233,37 @@ func TestGetAllParams(t *testing.T) {
 	}
 
 	router.GET("/param1/:param1/param2/:param2", func(w http.ResponseWriter, r *http.Request) {
-		id1 := gorouter.GetParam(r, "param1")
-		if id1 != param1 {
+		params := gorouter.GetAllParams(r)
+
+		if params["param1"] != param1 {
 			t.Fatal("TestGetAllParams test fail")
 		}
 
-		id2 := gorouter.GetParam(r, "param2")
-		if id2 != param2 {
+		if params["param2"] != param2 {
 			t.Fatal("TestGetAllParams test fail")
 		}
+	})
+	router.ServeHTTP(rr, req)
+}
+
+func TestGetAllParamsMiss(t *testing.T) {
+	router := gorouter.New()
+
+	rr := httptest.NewRecorder()
+
+	req, err := http.NewRequest(http.MethodGet, "/param1", nil)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	router.GET("/param1", func(w http.ResponseWriter, r *http.Request) {
+		params := gorouter.GetAllParams(r)
+
+		if params != nil {
+			t.Fatal("TestGetAllParams test fail")
+		}
+
 	})
 	router.ServeHTTP(rr, req)
 }
@@ -244,6 +288,30 @@ func TestRouter_Use(t *testing.T) {
 
 	router.Use(withLogging)
 	router.GET("/hi", func(w http.ResponseWriter, request *http.Request) {
+		fmt.Fprint(w, expected)
+	})
+	router.ServeHTTP(rr, req)
+
+	if rr.Body.String() != expected {
+		t.Errorf(errorFormat,
+			rr.Body.String(), expected)
+	}
+}
+
+func TestRouter_UseForRoot(t *testing.T) {
+	router := gorouter.New()
+
+	rr := httptest.NewRecorder()
+
+	req, err := http.NewRequest(http.MethodGet, "/", nil)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	router.Use(withLogging)
+	expected := "hi index"
+	router.GET("/", func(w http.ResponseWriter, request *http.Request) {
 		fmt.Fprint(w, expected)
 	})
 	router.ServeHTTP(rr, req)
@@ -301,5 +369,59 @@ func TestRouter_HandleRoot(t *testing.T) {
 	if rr.Body.String() != expected {
 		t.Errorf(errorFormat,
 			rr.Body.String(), expected)
+	}
+}
+
+func TestRouter_HandlePanic(t *testing.T) {
+	router := gorouter.New()
+
+	rr := httptest.NewRecorder()
+
+	req, err := http.NewRequest(http.MethodGet, "/", nil)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered in f", r)
+		}
+	}()
+
+	router.Handle("", "/hi", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, "invalid method")
+	})
+
+	router.ServeHTTP(rr, req)
+
+	if rr.Body.String() != expected {
+		t.Errorf(errorFormat,
+			rr.Body.String(), expected)
+	}
+}
+
+func TestRouter_Match(t *testing.T) {
+	router := gorouter.New()
+	requestUrl := "/xxx/1/yyy/2"
+
+	ok := router.Match(requestUrl, "/xxx/:param1/yyy/:param2")
+
+	if !ok {
+		t.Fatal("TestRouter_Match test fail")
+	}
+
+	errorRequestUrl := "#xxx#1#yyy#2"
+	ok = router.Match(errorRequestUrl, "/xxx/:param1/yyy/:param2")
+
+	if ok {
+		t.Fatal("TestRouter_Match test fail")
+	}
+
+	missRequestUrl := "/xxx/1/yyy/###"
+	ok = router.Match(missRequestUrl, "/xxx/:param1/yyy/:param2")
+
+	if ok {
+		t.Fatal("TestRouter_Match test fail")
 	}
 }
