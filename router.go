@@ -212,9 +212,6 @@ func (router *Router) Match(requestUrl string, path string) bool {
 // matchAndParse check if the request matches the route path and returns a map of the parsed
 func (router *Router) matchAndParse(requestUrl string, path string) (paramsMapType, bool) {
 	res := strings.Split(path, "/")
-	if res == nil {
-		return nil, false
-	}
 
 	var (
 		matchName []string
