@@ -224,16 +224,6 @@ func TestGetAllParams(t *testing.T) {
 	router.ServeHTTP(rr, req)
 }
 
-type statusRecorder struct {
-	http.ResponseWriter
-	status int
-}
-
-func (rec *statusRecorder) WriteHeader(code int) {
-	rec.status = code
-	rec.ResponseWriter.WriteHeader(code)
-}
-
 func withLogging(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Printf("Logged connection from %s", r.RemoteAddr)
