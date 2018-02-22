@@ -418,6 +418,13 @@ func TestRouter_Match(t *testing.T) {
 		t.Fatal("TestRouter_Match test fail")
 	}
 
+	errorPath := "#xxx#1#yyy#2"
+	ok = router.Match(requestUrl, errorPath)
+
+	if ok {
+		t.Fatal("TestRouter_Match test fail")
+	}
+
 	missRequestUrl := "/xxx/1/yyy/###"
 	ok = router.Match(missRequestUrl, "/xxx/:param1/yyy/:param2")
 
