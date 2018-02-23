@@ -3,4 +3,3 @@ profile_cpu.pdf
 profile_cpu.svg
 .idea/
 gorouter.test
-bench_test.go

@@ -3,7 +3,7 @@ package gorouter_test
 import (
 	"fmt"
 	"github.com/xujiajun/gorouter"
-	"log"
+	//"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -270,7 +270,7 @@ func TestGetAllParamsMiss(t *testing.T) {
 
 func withLogging(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("Logged connection from %s", r.RemoteAddr)
+		//log.Printf("Logged connection from %s", r.RemoteAddr)
 		next.ServeHTTP(w, r)
 	}
 }
@@ -385,7 +385,7 @@ func TestRouter_HandlePanic(t *testing.T) {
 
 	defer func() {
 		if r := recover(); r != nil {
-			fmt.Println("Recovered in f", r)
+			t.Log("Recovered in f", r)
 		}
 	}()
 
