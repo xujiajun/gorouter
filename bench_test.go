@@ -564,7 +564,7 @@ var (
 	httpRouter    http.Handler
 	goRouter      http.Handler
 	muxRouter     http.Handler
-	trieMuxRouter http.Handler
+	//trieMuxRouter http.Handler
 )
 
 func init() {
@@ -628,6 +628,11 @@ func benchRoutes(b *testing.B, router http.Handler, routes []route) {
 	}
 }
 
+// go version >= 1.8
+//func BenchmarkTrieMuxRouter(b *testing.B) {
+//	benchRoutes(b, trieMuxRouter, githubAPI)
+//}
+
 func BenchmarkHttpRouter(b *testing.B) {
 	benchRoutes(b, httpRouter, githubAPI)
 }
@@ -635,11 +640,6 @@ func BenchmarkHttpRouter(b *testing.B) {
 func BenchmarkGoRouter(b *testing.B) {
 	benchRoutes(b, goRouter, githubAPI)
 }
-
-// go version >= 1.8
-//func BenchmarkTrieMuxRouter(b *testing.B) {
-//	benchRoutes(b, trieMuxRouter, githubAPI)
-//}
 
 func BenchmarkMuxRouter(b *testing.B) {
 	benchRoutes(b, muxRouter, githubAPI2)
