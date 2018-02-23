@@ -219,7 +219,6 @@ Tested routers:
 
 * [httprouter](https://github.com/julienschmidt/httprouter)
 * [gorouter](https://github.com/xujiajun/gorouter)
-* [trie-mux](https://github.com/teambition/trie-mux)
 * [mux](https://github.com/gorilla/mux)
 
 
@@ -228,26 +227,24 @@ Result:
 ```
 GithubAPI Routes: 203
 GithubAPI2 Routes: 203
-   HttpRouter: 39384 Bytes
-   GoRouter: 83824 Bytes
-   trie-mux: 132968 Bytes
-   MuxRouter: 1325968 Bytes
+   HttpRouter: 37464 Bytes
+   GoRouter: 83616 Bytes
+   MuxRouter: 1324192 Bytes
 goos: darwin
 goarch: amd64
 pkg: github.com/xujiajun/gorouter
-BenchmarkHttpRouter-8      	   10000	    541511 ns/op	 1034370 B/op	    2604 allocs/op
-BenchmarkGoRouter-8        	   10000	    576834 ns/op	 1034417 B/op	    2843 allocs/op
-BenchmarkTrieMuxRouter-8   	   10000	    605637 ns/op	 1086466 B/op	    2975 allocs/op
-BenchmarkMuxRouter-8       	   10000	   6023484 ns/op	 1272879 B/op	    4691 allocs/op
+BenchmarkHttpRouter-8   	   10000	    517116 ns/op	 1034339 B/op	    2604 allocs/op
+BenchmarkGoRouter-8     	   10000	    551223 ns/op	 1034385 B/op	    2843 allocs/op
+BenchmarkMuxRouter-8    	   10000	   5825422 ns/op	 1272958 B/op	    4691 allocs/op
 PASS
-ok  	github.com/xujiajun/gorouter	77.503s
+ok  	github.com/xujiajun/gorouter	68.965s
 ```
 
 Conclusions:
 
-* Memory Consumption (HttpRouter > gorouter > TrieMuxRouter > MuxRouter) 
+* Memory Consumption (HttpRouter > gorouter > MuxRouter) 
 
-* Performance (HttpRouter > gorouter > TrieMuxRouter > MuxRouter)
+* Performance (HttpRouter > gorouter > MuxRouter)
 
 * Features (HttpRouter not support regexp, But others support)
 
