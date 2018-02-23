@@ -204,6 +204,20 @@ func main() {
 }
 ```
 
+## Pattern Rule
+
+The syntax here is modeled after [julienschmidt/httprouter](https://github.com/julienschmidt/httprouter) and [gorilla/mux](https://github.com/gorilla/mux)
+
+| Syntax | Description | Example |
+|--------|------|-------|
+| `:name` | named parameter | /user/:name |
+| `{name}` | named parameter | /user/{name} |
+| `{name:regexp}` | named with regexp parameter |  /user/{name:[0-9a-zA-Z]+} |
+| `:id` | named with regexp parameter |  /user/:id |
+
+And `:id` is short for `{id:[0-9]+}`, `{name}` and `:name` are short for `{name:[0-9a-zA-Z]+}`
+
+ 
 ## Benchmarks
 
 > go test -bench=.
@@ -254,6 +268,15 @@ As author of [HttpRouter](https://github.com/julienschmidt/httprouter) said `per
 ## Contributing
 
 If you'd like to help out with the project. You can put up a Pull Request.
+
+## Acknowledgements
+
+This package is inspired by the following:
+
+* [httprouter](https://github.com/julienschmidt/httprouter)
+* [bone](https://github.com/go-zoo/bone)
+* [trie-mux](https://github.com/teambition/trie-mux)
+* [alien](github.com/gernest/alien)
 
 ## License
 
