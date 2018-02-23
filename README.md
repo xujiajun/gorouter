@@ -276,7 +276,7 @@ This package is inspired by the following:
 * [httprouter](https://github.com/julienschmidt/httprouter)
 * [bone](https://github.com/go-zoo/bone)
 * [trie-mux](https://github.com/teambition/trie-mux)
-* [alien](github.com/gernest/alien)
+* [alien](https://github.com/gernest/alien)
 
 ## License
 
