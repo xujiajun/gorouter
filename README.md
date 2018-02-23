@@ -7,7 +7,7 @@ I wanted a simple, fast router that has no unnecessary overhead using the standa
 
 ## Features
 
-* Fast
+* Fast - see [benchmarks](#benchmarks)
 * URL parameters
 * Regex parameters
 * Routes groups
@@ -203,6 +203,56 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8181", mux))
 }
 ```
+
+## Benchmarks
+
+> go test -bench=.
+
+Benchmark System:
+
+* Go version 1.9.2
+* OS:        Mac OS X 10.13.3 
+* Architecture:   x86_64
+* 16 GB 2133 MHz LPDDR3
+
+Tested routers:
+
+* [httprouter](https://github.com/julienschmidt/httprouter)
+* [gorouter](https://github.com/xujiajun/gorouter)
+* [trie-mux](https://github.com/teambition/trie-mux)
+* [mux](https://github.com/gorilla/mux)
+
+
+Result:
+
+```
+GithubAPI Routes: 203
+GithubAPI2 Routes: 203
+   HttpRouter: 39384 Bytes
+   GoRouter: 83824 Bytes
+   trie-mux: 132968 Bytes
+   MuxRouter: 1325968 Bytes
+goos: darwin
+goarch: amd64
+pkg: github.com/xujiajun/gorouter
+BenchmarkHttpRouter-8      	   10000	    541511 ns/op	 1034370 B/op	    2604 allocs/op
+BenchmarkGoRouter-8        	   10000	    576834 ns/op	 1034417 B/op	    2843 allocs/op
+BenchmarkTrieMuxRouter-8   	   10000	    605637 ns/op	 1086466 B/op	    2975 allocs/op
+BenchmarkMuxRouter-8       	   10000	   6023484 ns/op	 1272879 B/op	    4691 allocs/op
+PASS
+ok  	github.com/xujiajun/gorouter	77.503s
+```
+
+Conclusions:
+
+* Memory Consumption (HttpRouter > gorouter > TrieMuxRouter > MuxRouter) 
+
+* Performance (HttpRouter > gorouter > TrieMuxRouter > MuxRouter)
+
+* Features (HttpRouter not support regexp, But others support)
+
+As author of [HttpRouter](https://github.com/julienschmidt/httprouter) said `performance can not be the (only) criterion for choosing a router. Play around a bit with some of the routers, and choose the one you like best. Moreover main memory is cheap and usually not a scarce resource.`
+
 
 ## Contributing
 
