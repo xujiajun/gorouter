@@ -217,9 +217,9 @@ Benchmark System:
 
 Tested routers:
 
-* [httprouter](https://github.com/julienschmidt/httprouter)
-* [gorouter](https://github.com/xujiajun/gorouter)
-* [mux](https://github.com/gorilla/mux)
+* [julienschmidt/httprouter](https://github.com/julienschmidt/httprouter)
+* [xujiajun/GoRouter](https://github.com/xujiajun/gorouter)
+* [gorilla/mux](https://github.com/gorilla/mux)
 
 
 Result:
@@ -246,7 +246,7 @@ Conclusions:
 
 * Performance (HttpRouter > gorouter > MuxRouter)
 
-* Features (HttpRouter not support regexp, But others support)
+* Features (HttpRouter not support regexp, But GoRouter and MuxRouter support)
 
 As author of [HttpRouter](https://github.com/julienschmidt/httprouter) said `performance can not be the (only) criterion for choosing a router. Play around a bit with some of the routers, and choose the one you like best. Moreover main memory is cheap and usually not a scarce resource.`
 
