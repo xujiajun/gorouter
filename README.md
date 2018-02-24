@@ -1,4 +1,4 @@
-# gorouter  [![GoDoc](https://godoc.org/github.com/xujiajun/gorouter?status.svg)](https://godoc.org/github.com/xujiajun/gorouter) <a href="https://travis-ci.org/xujiajun/gorouter"><img src="https://travis-ci.org/xujiajun/gorouter.svg?branch=master" alt="Build Status"></a> [![Go Report Card](https://goreportcard.com/badge/github.com/xujiajun/gorouter)](https://goreportcard.com/report/github.com/xujiajun/gorouter) [![Coverage Status](https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_100.svg)](https://coveralls.io/github/xujiajun/gorouter?branch=master)
+# gorouter  [![GoDoc](https://godoc.org/github.com/xujiajun/gorouter?status.svg)](https://godoc.org/github.com/xujiajun/gorouter) <a href="https://travis-ci.org/xujiajun/gorouter"><img src="https://travis-ci.org/xujiajun/gorouter.svg?branch=master" alt="Build Status"></a> [![Go Report Card](https://goreportcard.com/badge/github.com/xujiajun/gorouter)](https://goreportcard.com/report/github.com/xujiajun/gorouter) [![Coverage Status](https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_100.svg)](https://coveralls.io/github/xujiajun/gorouter?branch=master) [![License](http://img.shields.io/badge/license-mit-blue.svg?style=flat-square)](https://raw.githubusercontent.com/xujiajun/gorouter/master/LICENSE)
 A simple and fast HTTP router for Go.
 
 ## Motivation
@@ -211,11 +211,10 @@ The syntax here is modeled after [julienschmidt/httprouter](https://github.com/j
 | Syntax | Description | Example |
 |--------|------|-------|
 | `:name` | named parameter | /user/:name |
-| `{name}` | named parameter | /user/{name} |
 | `{name:regexp}` | named with regexp parameter |  /user/{name:[0-9a-zA-Z]+} |
 | `:id` | named with regexp parameter |  /user/:id |
 
-And `:id` is short for `{id:[0-9]+}`, `{name}` and `:name` are short for `{name:[0-9a-zA-Z]+}`
+And `:id` is short for `{id:[0-9]+}`, `:name` are short for `{name:[0-9a-zA-Z_]+}`
 
  
 ## Benchmarks
