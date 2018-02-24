@@ -268,6 +268,14 @@ As author of [HttpRouter](https://github.com/julienschmidt/httprouter) said `per
 
 If you'd like to help out with the project. You can put up a Pull Request.
 
+## Author
+
+* [xujiajun](https://github.com/xujiajun)
+
+## License
+
+The gorouter is open-sourced software licensed under the [MIT Licensed](http://www.opensource.org/licenses/MIT)
+
 ## Acknowledgements
 
 This package is inspired by the following:
@@ -276,7 +284,3 @@ This package is inspired by the following:
 * [bone](https://github.com/go-zoo/bone)
 * [trie-mux](https://github.com/teambition/trie-mux)
 * [alien](https://github.com/gernest/alien)
-
-## License
-
-The gorouter is open-sourced software licensed under the [MIT Licensed](http://www.opensource.org/licenses/MIT)
