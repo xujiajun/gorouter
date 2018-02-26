@@ -7,6 +7,7 @@ import (
 	"os"
 )
 
+//ServeFiles serve static resources
 func ServeFiles(w http.ResponseWriter, r *http.Request) {
 	wd, err := os.Getwd()
 	if err != nil {
