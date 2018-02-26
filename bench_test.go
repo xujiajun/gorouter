@@ -1,12 +1,12 @@
 package gorouter_test
 
 import (
-	"runtime"
-	"net/http"
-	"testing"
-	"net/http/httptest"
 	"github.com/julienschmidt/httprouter"
 	"github.com/xujiajun/gorouter"
+	"net/http"
+	"net/http/httptest"
+	"runtime"
+	"testing"
 	//triemux "github.com/teambition/trie-mux/mux"
 	"github.com/gorilla/mux"
 )
@@ -561,9 +561,9 @@ func calcMem(name string, load func()) {
 }
 
 var (
-	httpRouter    http.Handler
-	goRouter      http.Handler
-	muxRouter     http.Handler
+	httpRouter http.Handler
+	goRouter   http.Handler
+	muxRouter  http.Handler
 	//trieMuxRouter http.Handler
 )
 
