@@ -198,6 +198,26 @@ func TestRouter_HandleNotFound(t *testing.T) {
 	}
 }
 
+func TestRouter_CustomPanicHandler(t *testing.T) {
+	router := gorouter.New()
+
+	rr := httptest.NewRecorder()
+
+	req, err := http.NewRequest(http.MethodPost, "/aaa", nil)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+	router.PanicHandler = func(w http.ResponseWriter, request *http.Request, err interface{}) {
+		t.Log("received a panic", err)
+	}
+
+	router.GET("/aaa", func(w http.ResponseWriter, request *http.Request) {
+		fmt.Fprint(w, expected)
+	})
+	router.ServeHTTP(rr, req)
+}
+
 func TestGetParam(t *testing.T) {
 	router := gorouter.New()
 

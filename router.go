@@ -34,6 +34,8 @@ type (
 		trees map[string]*Tree
 		// Custom route not found handler
 		notFound http.HandlerFunc
+		// PanicHandler for handling panic.
+		PanicHandler func(w http.ResponseWriter, req *http.Request, err interface{})
 	}
 )
 
@@ -134,6 +136,19 @@ func GetAllParams(r *http.Request) paramsMapType {
 // ServeHTTP makes the router implement the http.Handler interface.
 func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	requestUrl := r.URL.Path
+
+	if router.PanicHandler != nil {
+		defer func() {
+			if err := recover(); err != nil {
+				router.PanicHandler(w, r, err)
+			}
+		}()
+	}
+
+	if router.trees[r.Method] == nil {
+		panic(fmt.Errorf("Error method or method is not registered"))
+	}
+
 	nodes := router.trees[r.Method].Find(requestUrl, 0)
 
 	for _, node := range nodes {
