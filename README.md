@@ -12,6 +12,7 @@ I wanted a simple, fast router that has no unnecessary overhead using the standa
 * Regex parameters
 * Routes groups
 * Custom NotFoundHandler
+* Custom PanicHandler
 * Middleware chain Support
 * No external dependencies (just Go 1.7+ stdlib)
 
