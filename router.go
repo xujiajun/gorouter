@@ -237,41 +237,43 @@ func (router *Router) matchAndParse(requestUrl string, path string) (paramsMapTy
 
 	for _, str := range res {
 
-		if str != "" {
-			r := []byte(str)
+		if str == "" {
+			continue
+		}
 
-			if string(r[0]) == "{" && string(r[len(r)-1]) == "}" {
-				matchStr := string(r[1 : len(r)-1])
-				res := strings.Split(matchStr, ":")
+		r := []byte(str)
 
-				matchName = append(matchName, res[0])
+		if string(r[0]) == "{" && string(r[len(r)-1]) == "}" {
+			matchStr := string(r[1 : len(r)-1])
+			res := strings.Split(matchStr, ":")
 
-				sTemp = sTemp + "/" + "(" + res[1] + ")"
-			} else if string(r[0]) == ":" {
-				matchStr := string(r)
-				res := strings.Split(matchStr, ":")
-				matchName = append(matchName, res[1])
+			matchName = append(matchName, res[0])
 
-				if res[1] == idKey {
-					sTemp = sTemp + "/" + "(" + idPattern + ")"
-				} else {
-					sTemp = sTemp + "/" + "(" + defaultPattern + ")"
-				}
+			sTemp = sTemp + "/" + "(" + res[1] + ")"
+		} else if string(r[0]) == ":" {
+			matchStr := string(r)
+			res := strings.Split(matchStr, ":")
+			matchName = append(matchName, res[1])
+
+			if res[1] == idKey {
+				sTemp = sTemp + "/" + "(" + idPattern + ")"
 			} else {
-				sTemp = sTemp + "/" + str
+				sTemp = sTemp + "/" + "(" + defaultPattern + ")"
 			}
+		} else {
+			sTemp = sTemp + "/" + str
 		}
 	}
 
 	pattern := sTemp
 
 	re := regexp.MustCompile(pattern)
-	submatch := re.FindSubmatch([]byte(requestUrl))
+	subMatch := re.FindSubmatch([]byte(requestUrl))
 
-	if submatch != nil {
-		if string(submatch[0]) == requestUrl {
-			submatch = submatch[1:]
-			for k, v := range submatch {
+	if subMatch != nil {
+		if string(subMatch[0]) == requestUrl {
+			subMatch = subMatch[1:]
+			for k, v := range subMatch {
 				matchParams[matchName[k]] = string(v)
 			}
 			return matchParams, true
