@@ -22,7 +22,7 @@ var (
 )
 
 type (
-	// MiddlewareType is a private type that is used for middleware
+	// MiddlewareType is a public type that is used for middleware
 	MiddlewareType func(next http.HandlerFunc) http.HandlerFunc
 	// Router is a simple HTTP route multiplexer that parses a request path,
 	// records any URL params, and executes an end handler.
