@@ -24,7 +24,7 @@ type (
 		// isLeaf flag
 		isLeaf bool
 		// middleware records middleware stack
-		middleware []middlewareType
+		middleware []MiddlewareType
 	}
 )
 
@@ -45,7 +45,7 @@ func NewTree() *Tree {
 }
 
 // Add use `pattern` 、handle、middleware stack as node register to tree
-func (tree *Tree) Add(pattern string, handle http.HandlerFunc, middleware ...middlewareType) {
+func (tree *Tree) Add(pattern string, handle http.HandlerFunc, middleware ...MiddlewareType) {
 	var parent = tree.root
 
 	if pattern != parent.key {

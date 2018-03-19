@@ -22,14 +22,14 @@ var (
 )
 
 type (
-	// middlewareType is a private type that is used for middleware
-	middlewareType func(next http.HandlerFunc) http.HandlerFunc
+	// MiddlewareType is a private type that is used for middleware
+	MiddlewareType func(next http.HandlerFunc) http.HandlerFunc
 	// Router is a simple HTTP route multiplexer that parses a request path,
 	// records any URL params, and executes an end handler.
 	Router struct {
 		prefix string
 		// The middleware stack
-		middleware []middlewareType
+		middleware []MiddlewareType
 		// the tree routers
 		trees map[string]*Tree
 		// Custom route not found handler
@@ -194,14 +194,14 @@ func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 // Use appends a middleware handler to the middleware stack.
-func (router *Router) Use(middleware ...middlewareType) {
+func (router *Router) Use(middleware ...MiddlewareType) {
 	if len(middleware) > 0 {
 		router.middleware = append(router.middleware, middleware...)
 	}
 }
 
 // HandleNotFound registers a handler when the request route is not found
-func (router *Router) HandleNotFound(w http.ResponseWriter, r *http.Request, middleware []middlewareType) {
+func (router *Router) HandleNotFound(w http.ResponseWriter, r *http.Request, middleware []MiddlewareType) {
 	if router.notFound != nil {
 		handle(w, r, router.notFound, middleware)
 		return
@@ -210,7 +210,7 @@ func (router *Router) HandleNotFound(w http.ResponseWriter, r *http.Request, mid
 }
 
 // handle execute middleware chain
-func handle(w http.ResponseWriter, r *http.Request, handler http.HandlerFunc, middleware []middlewareType) {
+func handle(w http.ResponseWriter, r *http.Request, handler http.HandlerFunc, middleware []MiddlewareType) {
 	var baseHandler = handler
 	for _, m := range middleware {
 		baseHandler = m(baseHandler)
