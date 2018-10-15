@@ -310,33 +310,40 @@ Tested routers:
 * [julienschmidt/httprouter](https://github.com/julienschmidt/httprouter)
 * [xujiajun/GoRouter](https://github.com/xujiajun/gorouter)
 * [gorilla/mux](https://github.com/gorilla/mux)
+* [trie-mux/mux](github.com/teambition/trie-mux/mux)
 
 
 Result:
 
 ```
+➜  gorouter git:(master) ✗ go test -bench=.     
 GithubAPI Routes: 203
 GithubAPI2 Routes: 203
    HttpRouter: 37464 Bytes
    GoRouter: 83616 Bytes
+   trie-mux: 135096 Bytes
    MuxRouter: 1324192 Bytes
 goos: darwin
 goarch: amd64
 pkg: github.com/xujiajun/gorouter
-BenchmarkHttpRouter-8   	   10000	    517116 ns/op	 1034339 B/op	    2604 allocs/op
-BenchmarkGoRouter-8     	   10000	    551223 ns/op	 1034385 B/op	    2843 allocs/op
-BenchmarkMuxRouter-8    	   10000	   5825422 ns/op	 1272958 B/op	    4691 allocs/op
+BenchmarkTrieMuxRouter-8           10000            692179 ns/op         1086465 B/op       2975 allocs/op
+BenchmarkHttpRouter-8              10000            627134 ns/op         1034366 B/op       2604 allocs/op
+BenchmarkGoRouter-8                10000            630895 ns/op         1034415 B/op       2843 allocs/op
+BenchmarkMuxRouter-8               10000           6396340 ns/op         1272876 B/op       4691 allocs/op
 PASS
-ok  	github.com/xujiajun/gorouter	68.965s
+ok      github.com/xujiajun/gorouter    83.503s
+
 ```
 
 Conclusions:
 
-* Memory Consumption (HttpRouter > gorouter > MuxRouter) 
+* Memory Consumption (HttpRouter < gorouter < TrieMuxRouter < MuxRouter) 
 
-* Performance (HttpRouter > gorouter > MuxRouter)
+* Performance (HttpRouter > gorouter > TrieMuxRouter > MuxRouter)
 
-* Features (HttpRouter not support regexp, But GoRouter and MuxRouter support)
+* Features (HttpRouter not support regexp, But GoRouter and MuxRouter and TrieMuxRouter support)
+
+> if you want a performance router which support regexp, maybe [xujiajun/gorouter](https://github.com/xujiajun/gorouter) is good choice.
 
 As author of [HttpRouter](https://github.com/julienschmidt/httprouter) said `performance can not be the (only) criterion for choosing a router. Play around a bit with some of the routers, and choose the one you like best. Moreover main memory is cheap and usually not a scarce resource.`
 
