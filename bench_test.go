@@ -1,14 +1,14 @@
 package gorouter_test
 
 import (
+	"github.com/gorilla/mux"
 	"github.com/julienschmidt/httprouter"
+	triemux "github.com/teambition/trie-mux/mux"
 	"github.com/xujiajun/gorouter"
 	"net/http"
 	"net/http/httptest"
 	"runtime"
 	"testing"
-	//triemux "github.com/teambition/trie-mux/mux"
-	"github.com/gorilla/mux"
 )
 
 type route struct {
@@ -561,10 +561,10 @@ func calcMem(name string, load func()) {
 }
 
 var (
-	httpRouter http.Handler
-	goRouter   http.Handler
-	muxRouter  http.Handler
-	//trieMuxRouter http.Handler
+	httpRouter    http.Handler
+	goRouter      http.Handler
+	muxRouter     http.Handler
+	trieMuxRouter http.Handler
 )
 
 func init() {
@@ -592,17 +592,16 @@ func init() {
 		goRouter = router
 	})
 
-	// go version >= 1.8
-	//calcMem("trie-mux", func() {
-	//	router := triemux.New()
-	//	handler := func(w http.ResponseWriter, _ *http.Request, _ triemux.Params) {
-	//		w.WriteHeader(204)
-	//	}
-	//	for _, route := range githubAPI {
-	//		router.Handle(route.method, route.path, handler)
-	//	}
-	//	trieMuxRouter = router
-	//})
+	calcMem("trie-mux", func() {
+		router := triemux.New()
+		handler := func(w http.ResponseWriter, _ *http.Request, _ triemux.Params) {
+			w.WriteHeader(204)
+		}
+		for _, route := range githubAPI {
+			router.Handle(route.method, route.path, handler)
+		}
+		trieMuxRouter = router
+	})
 
 	calcMem("MuxRouter", func() {
 		router := mux.NewRouter()
@@ -628,10 +627,9 @@ func benchRoutes(b *testing.B, router http.Handler, routes []route) {
 	}
 }
 
-// go version >= 1.8
-//func BenchmarkTrieMuxRouter(b *testing.B) {
-//	benchRoutes(b, trieMuxRouter, githubAPI)
-//}
+func BenchmarkTrieMuxRouter(b *testing.B) {
+	benchRoutes(b, trieMuxRouter, githubAPI)
+}
 
 func BenchmarkHttpRouter(b *testing.B) {
 	benchRoutes(b, httpRouter, githubAPI)
