@@ -21,8 +21,8 @@ type (
 		depth int
 		// children records Node's children node
 		children map[string]*Node
-		// isLeaf flag
-		isLeaf bool
+		// isPattern flag
+		isPattern bool
 		// middleware records middleware stack
 		middleware []MiddlewareType
 	}
@@ -72,10 +72,10 @@ func (tree *Tree) Add(pattern string, handle http.HandlerFunc, middleware ...Mid
 	if len(middleware) > 0 && parent.depth == 1 {
 		parent.middleware = append(parent.middleware, middleware...)
 	}
-	parent.handle = handle
-	parent.isLeaf = true
-	parent.path = pattern
 
+	parent.handle = handle
+	parent.isPattern = true
+	parent.path = pattern
 }
 
 // Find returns nodes that the request match the route pattern
@@ -114,7 +114,7 @@ func (tree *Tree) Find(pattern string, isRegex int) (nodes []*Node) {
 	for len(queue) > 0 {
 		var queueTemp []*Node
 		for _, n := range queue {
-			if n.isLeaf {
+			if n.isPattern {
 				nodes = append(nodes, n)
 			}
 
