@@ -14,6 +14,8 @@ I wanted a simple, fast router that has no unnecessary overhead using the standa
 * [Custom NotFoundHandler](#custom-notfoundhandler)
 * [Custom PanicHandler](#custom-panichandler)
 * [Middleware Chain Support](#middlewares-chain)
+* [Serve Static Files](#serve-static-files)
+* [Pattern Rule Familiar](#pattern-rule)
 * HTTP Method Get、Post、Delete、Put、Patch Support
 * No external dependencies (just Go stdlib)
 
