@@ -342,15 +342,13 @@ ok      github.com/xujiajun/gorouter    83.503s
 
 Conclusions:
 
-* Memory Consumption (HttpRouter < gorouter < TrieMuxRouter < MuxRouter) 
+* Performance (xujiajun/gorouter ≈ julienschmidt/httprouter > teambition/trie-mux > gorilla/mux)
 
-* Performance (HttpRouter > gorouter > TrieMuxRouter > MuxRouter)
+* Memory Consumption (xujiajun/gorouter ≈ julienschmidt/httprouter < teambition/trie-mux < gorilla/mux) 
 
-* Features (HttpRouter not support regexp, But GoRouter and MuxRouter and TrieMuxRouter support)
+* Features (xujiajun/gorouter and gorilla/mux and teambition/trie-mux support regexp, But julienschmidt/httprouter not support)
 
 > if you want a performance router which support regexp, maybe [xujiajun/gorouter](https://github.com/xujiajun/gorouter) is good choice.
-
-As author of [HttpRouter](https://github.com/julienschmidt/httprouter) said `performance can not be the (only) criterion for choosing a router. Play around a bit with some of the routers, and choose the one you like best. Moreover main memory is cheap and usually not a scarce resource.`
 
 
 ## Contributing
