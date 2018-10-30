@@ -8,12 +8,12 @@ I wanted a simple, fast router that has no unnecessary overhead using the standa
 ## Features
 
 * Fast - see [benchmarks](#benchmarks)
-* URL parameters
-* Regex parameters
-* Routes groups
-* Custom NotFoundHandler
-* Custom PanicHandler
-* Middleware chain Support
+* [URL parameters](#url-parameters)
+* [Regex parameters](#regex-parameters)
+* [Routes groups](#routes-groups)
+* [Custom NotFoundHandler](#custom-notfoundhandler)
+* [Custom PanicHandler](#custom-panichandler)
+* [Middleware Chain Support](#middlewares-chain)
 * HTTP Method Get、Post、Delete、Put、Patch Support
 * No external dependencies (just Go stdlib)
 
@@ -96,7 +96,7 @@ func main() {
 ```
 
 
-### Group routes
+### Routes Groups
 
 ```
 package main
@@ -176,7 +176,7 @@ func main() {
 
 ```
 
-### Middlewares
+### Middlewares Chain
 
 ```
 package main
