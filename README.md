@@ -34,7 +34,7 @@ go get github.com/xujiajun/gorouter
 
 ### Static routes
 
-```
+```golang
 package main
 
 import (
@@ -55,7 +55,7 @@ func main() {
 
 ### URL Parameters
 
-```
+```golang
 package main
 
 import (
@@ -77,7 +77,7 @@ func main() {
 
 ### Regex Parameters
 
-```
+```golang
 package main
 
 import (
@@ -100,7 +100,7 @@ func main() {
 
 ### Routes Groups
 
-```
+```golang
 package main
 
 import (
@@ -124,7 +124,7 @@ func main() {
 
 ### Custom NotFoundHandler
 
-```
+```golang
 package main
 
 import (
@@ -152,7 +152,7 @@ func main() {
 
 ### Custom PanicHandler
 
-```
+```golang
 package main
 
 import (
@@ -180,7 +180,7 @@ func main() {
 
 ### Middlewares Chain
 
-```
+```golang
 package main
 
 import (
@@ -242,7 +242,7 @@ func main() {
 
 ## Serve static files
 
-```
+```golang
 package main
 
 import (
