@@ -1,5 +1,5 @@
 # gorouter  [![GoDoc](https://godoc.org/github.com/xujiajun/gorouter?status.svg)](https://godoc.org/github.com/xujiajun/gorouter) <a href="https://travis-ci.org/xujiajun/gorouter"><img src="https://travis-ci.org/xujiajun/gorouter.svg?branch=master" alt="Build Status"></a> [![Go Report Card](https://goreportcard.com/badge/github.com/xujiajun/gorouter)](https://goreportcard.com/report/github.com/xujiajun/gorouter) [![Coverage Status](https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_100.svg)](https://coveralls.io/github/xujiajun/gorouter?branch=master) [![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/xujiajun/gorouter/master/LICENSE)  [![Release](https://img.shields.io/badge/release-v1.0.1-blue.svg?style=flat-square)](https://github.com/xujiajun/gorouter/releases/tag/v1.0.1) [![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/avelino/awesome-go#routers) 
-`xujiajun/gorouter` is a simple and fast HTTP router for Go. It is easy to build RESTful Apis and your web framework.
+`xujiajun/gorouter` is a simple and fast HTTP router for Go. It is easy to build RESTful APIs and your web framework.
 
 ## Motivation
 
