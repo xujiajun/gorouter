@@ -346,7 +346,7 @@ Conclusions:
 
 * Memory Consumption (xujiajun/gorouter ≈ julienschmidt/httprouter < teambition/trie-mux < gorilla/mux) 
 
-* Features (xujiajun/gorouter and gorilla/mux and teambition/trie-mux support regexp, But julienschmidt/httprouter not support)
+* Features (xujiajun/gorouter, gorilla/mux and teambition/trie-mux support regexp, But julienschmidt/httprouter not support)
 
 > if you want a performance router which support regexp, maybe [xujiajun/gorouter](https://github.com/xujiajun/gorouter) is good choice.
 
