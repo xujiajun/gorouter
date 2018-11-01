@@ -12,12 +12,12 @@ var (
 	defaultPattern = `[\w]+`
 	idPattern      = `[\d]+`
 	idKey          = `id`
-	methods        = map[string]string{
-		http.MethodGet:    http.MethodGet,
-		http.MethodPost:   http.MethodPost,
-		http.MethodPut:    http.MethodPut,
-		http.MethodDelete: http.MethodDelete,
-		http.MethodPatch:  http.MethodPatch,
+	methods        = map[string]bool{
+		http.MethodGet:    true,
+		http.MethodPost:   true,
+		http.MethodPut:    true,
+		http.MethodDelete: true,
+		http.MethodPatch:  true,
 	}
 )
 
@@ -92,7 +92,7 @@ func (router *Router) NotFoundFunc(handler http.HandlerFunc) {
 
 // Handle registers a new request handle with the given path and method.
 func (router *Router) Handle(method string, path string, handle http.HandlerFunc) {
-	if methods[method] == "" {
+	if _, ok := methods[method]; !ok {
 		panic(fmt.Errorf("invalid method"))
 	}
 
@@ -241,17 +241,19 @@ func (router *Router) matchAndParse(requestUrl string, path string) (paramsMapTy
 			continue
 		}
 
-		r := []byte(str)
+		strLen := len(str)
+		firstChar := str[0]
+		lastChar := str[strLen-1]
 
-		if string(r[0]) == "{" && string(r[len(r)-1]) == "}" {
-			matchStr := string(r[1 : len(r)-1])
+		if string(firstChar) == "{" && string(lastChar) == "}" {
+			matchStr := string(str[1 : strLen-1])
 			res := strings.Split(matchStr, ":")
 
 			matchName = append(matchName, res[0])
 
 			sTemp = sTemp + "/" + "(" + res[1] + ")"
-		} else if string(r[0]) == ":" {
-			matchStr := string(r)
+		} else if string(firstChar) == ":" {
+			matchStr := str
 			res := strings.Split(matchStr, ":")
 			matchName = append(matchName, res[1])
 
