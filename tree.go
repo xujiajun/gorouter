@@ -118,8 +118,8 @@ func (tree *Tree) Find(pattern string, isRegex int) (nodes []*Node) {
 				nodes = append(nodes, n)
 			}
 
-			for _, vnode := range n.children {
-				queueTemp = append(queueTemp, vnode)
+			for _, childNode := range n.children {
+				queueTemp = append(queueTemp, childNode)
 			}
 		}
 
