@@ -12,12 +12,12 @@ var (
 	defaultPattern = `[\w]+`
 	idPattern      = `[\d]+`
 	idKey          = `id`
-	methods        = map[string]string{
-		http.MethodGet:    http.MethodGet,
-		http.MethodPost:   http.MethodPost,
-		http.MethodPut:    http.MethodPut,
-		http.MethodDelete: http.MethodDelete,
-		http.MethodPatch:  http.MethodPatch,
+	methods        = map[string]bool{
+		http.MethodGet:    true,
+		http.MethodPost:   true,
+		http.MethodPut:    true,
+		http.MethodDelete: true,
+		http.MethodPatch:  true,
 	}
 )
 
@@ -92,7 +92,7 @@ func (router *Router) NotFoundFunc(handler http.HandlerFunc) {
 
 // Handle registers a new request handle with the given path and method.
 func (router *Router) Handle(method string, path string, handle http.HandlerFunc) {
-	if methods[method] == "" {
+	if _, ok := methods[method]; !ok {
 		panic(fmt.Errorf("invalid method"))
 	}
 
