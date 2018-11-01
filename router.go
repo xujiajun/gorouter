@@ -241,17 +241,19 @@ func (router *Router) matchAndParse(requestUrl string, path string) (paramsMapTy
 			continue
 		}
 
-		r := []byte(str)
+		strLen := len(str)
+		firstChar := str[0]
+		lastChar := str[strLen-1]
 
-		if string(r[0]) == "{" && string(r[len(r)-1]) == "}" {
-			matchStr := string(r[1 : len(r)-1])
+		if string(firstChar) == "{" && string(lastChar) == "}" {
+			matchStr := string(str[1 : strLen-1])
 			res := strings.Split(matchStr, ":")
 
 			matchName = append(matchName, res[0])
 
 			sTemp = sTemp + "/" + "(" + res[1] + ")"
-		} else if string(r[0]) == ":" {
-			matchStr := string(r)
+		} else if string(firstChar) == ":" {
+			matchStr := str
 			res := strings.Split(matchStr, ":")
 			matchName = append(matchName, res[1])
 
