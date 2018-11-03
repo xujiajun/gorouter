@@ -151,25 +151,23 @@ func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	nodes := router.trees[r.Method].Find(requestUrl, 0)
 
-	for _, node := range nodes {
+	if len(nodes) > 0 {
+		node := nodes[0]
 
-		handler := node.handle
-		path := node.path
-
-		if handler != nil {
-			if path == requestUrl {
-				handle(w, r, handler, node.middleware)
+		if node.handle != nil {
+			if node.path == requestUrl {
+				handle(w, r, node.handle, node.middleware)
 				return
 			}
 
-			if path == requestUrl[1:] {
-				handle(w, r, handler, node.middleware)
+			if node.path == requestUrl[1:] {
+				handle(w, r, node.handle, node.middleware)
 				return
 			}
 		}
 	}
 
-	if nodes == nil {
+	if len(nodes) == 0 {
 		res := strings.Split(requestUrl, "/")
 		prefix := res[1]
 

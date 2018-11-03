@@ -1,6 +1,9 @@
 package gorouter_test
 
 import (
+	beegomux "github.com/beego/mux"
+	"github.com/go-chi/chi"
+	"github.com/go-zoo/bone"
 	"github.com/gorilla/mux"
 	"github.com/julienschmidt/httprouter"
 	triemux "github.com/teambition/trie-mux/mux"
@@ -561,16 +564,64 @@ func calcMem(name string, load func()) {
 }
 
 var (
-	httpRouter    http.Handler
-	muxRouter     http.Handler
-	trieMuxRouter http.Handler
-	goRouter1     http.Handler
-	goRouter2     http.Handler
+	beegoMuxRouter http.Handler
+	boneRouter     http.Handler
+	chiRouter      http.Handler
+	httpRouter     http.Handler
+	goRouter1      http.Handler
+	goRouter2      http.Handler
+	muxRouter      http.Handler
+	trieMuxRouter  http.Handler
 )
 
 func init() {
 	println("GithubAPI Routes:", len(githubAPI))
 	println("GithubAPI2 Routes:", len(githubAPI2))
+
+	calcMem("BeegoMuxRouter", func() {
+		router := beegomux.New()
+		handler := func(w http.ResponseWriter, _ *http.Request) {
+			w.WriteHeader(204)
+		}
+		for _, route := range githubAPI {
+			router.Handle(route.method, route.path, handler)
+		}
+		beegoMuxRouter = router
+	})
+
+	calcMem("BoneRouter", func() {
+		router := bone.New()
+		handler := func(w http.ResponseWriter, _ *http.Request) {
+			w.WriteHeader(204)
+		}
+		for _, route := range githubAPI {
+			if route.method == http.MethodGet {
+				router.Get(route.path, http.HandlerFunc(handler))
+			}
+			if route.method == http.MethodPost {
+				router.Post(route.path, http.HandlerFunc(handler))
+			}
+			if route.method == http.MethodPut {
+				router.Put(route.path, http.HandlerFunc(handler))
+			}
+			if route.method == http.MethodDelete {
+				router.Delete(route.path, http.HandlerFunc(handler))
+			}
+		}
+		boneRouter = router
+	})
+
+	calcMem("ChiRouter", func() {
+		router := chi.NewRouter()
+		handler := func(w http.ResponseWriter, _ *http.Request) {
+			w.WriteHeader(204)
+		}
+		for _, route := range githubAPI {
+			router.MethodFunc(route.method, route.path, handler)
+		}
+		chiRouter = router
+	})
+
 	calcMem("HttpRouter", func() {
 		router := httprouter.New()
 		handler := func(w http.ResponseWriter, _ *http.Request, _ httprouter.Params) {
@@ -627,19 +678,37 @@ func init() {
 	})
 }
 
+// reference：https://github.com/julienschmidt/go-http-routing-benchmark/blob/2b136956a56bc65dddfa4bdaf7d1728ae2c90d50/bench_test.go#L76
 func benchRoutes(b *testing.B, router http.Handler, routes []route) {
-	b.N = 10000
+	w := httptest.NewRecorder()
+	r, _ := http.NewRequest("GET", "/", nil)
+	u := r.URL
+	rq := u.RawQuery
+
 	b.ReportAllocs()
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
 		for _, route := range routes {
-			router.ServeHTTP(httptest.NewRecorder(), httptest.NewRequest(route.method, route.path, nil))
+			r.Method = route.method
+			r.RequestURI = route.path
+			u.Path = route.path
+			u.RawQuery = rq
+			router.ServeHTTP(w, r)
 		}
 	}
 }
 
-// WithGithubAPI (goRouter vs httpRouter vs trieMuxRouter)
+// With GithubAPI (goRouter vs beegoMuxRouter vs BoneRouter vs httpRouter vs trieMuxRouter)
+
+func BenchmarkBeegoMuxRouterWithGithubAPI(b *testing.B) {
+	benchRoutes(b, beegoMuxRouter, githubAPI)
+}
+
+func BenchmarkBoneRouterWithGithubAPI(b *testing.B) {
+	benchRoutes(b, boneRouter, githubAPI)
+}
+
 func BenchmarkTrieMuxRouterWithGithubAPI(b *testing.B) {
 	benchRoutes(b, trieMuxRouter, githubAPI)
 }
@@ -652,9 +721,14 @@ func BenchmarkGoRouter1WithGithubAPI(b *testing.B) {
 	benchRoutes(b, goRouter1, githubAPI)
 }
 
-// WithGithubAPI2 (goRouter vs muxRouter)
+// With GithubAPI2 (goRouter vs muxRouter vs chiRouter)
+
 func BenchmarkGoRouter2WithGithubAPI2(b *testing.B) {
 	benchRoutes(b, goRouter2, githubAPI2)
+}
+
+func BenchmarkChiRouterWithGithubAPI2(b *testing.B) {
+	benchRoutes(b, chiRouter, githubAPI2)
 }
 
 func BenchmarkMuxRouterWithGithubAPI2(b *testing.B) {
