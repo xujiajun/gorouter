@@ -145,7 +145,7 @@ func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}()
 	}
 
-	if router.trees[r.Method] == nil {
+	if _, ok := router.trees[r.Method]; !ok {
 		panic(fmt.Errorf("Error method or method is not registered "))
 	}
 
