@@ -390,9 +390,9 @@ ok  	github.com/xujiajun/gorouter	15.013s
 
 * Features (julienschmidt/httprouter not support regexp，but others support it)
 
-> if you want a hight performance router which support regexp, maybe [xujiajun/gorouter](https://github.com/xujiajun/gorouter) is good choice.
+> if you want a high performance router which support regexp, maybe [xujiajun/gorouter](https://github.com/xujiajun/gorouter) is good choice.
 
-> if you want a hight performance router which not support regexp, maybe [julienschmidt/httprouter](https://github.com/julienschmidt/httprouter) is good choice.
+> if you want a high performance router which not support regexp, maybe [julienschmidt/httprouter](https://github.com/julienschmidt/httprouter) is good choice.
 
 In the end, as julienschmidt said `performance can not be the (only) criterion for choosing a router. Play around a bit with some of the routers, and choose the one you like best.`
 
