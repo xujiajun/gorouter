@@ -328,7 +328,7 @@ And `:id` is short for `{id:[0-9]+}`, `:name` are short for `{name:[0-9a-zA-Z_]+
 * [xujiajun/GoRouter](https://github.com/xujiajun/gorouter)
 
 
-Thanks the auther of httprouter: [@julienschmidt](https://github.com/julienschmidt) give me advise about benchmark [issues/24](https://github.com/xujiajun/gorouter/issues/24)
+Thanks the author of httprouter: [@julienschmidt](https://github.com/julienschmidt) give me advise about benchmark [issues/24](https://github.com/xujiajun/gorouter/issues/24)
 
 ## Result:
 
