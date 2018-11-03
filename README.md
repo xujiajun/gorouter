@@ -324,7 +324,7 @@ And `:id` is short for `{id:[0-9]+}`, `:name` are short for `{name:[0-9a-zA-Z_]+
 * [go-chi/chi](https://github.com/go-chi/chi)
 * [julienschmidt/httprouter](https://github.com/julienschmidt/httprouter)
 * [gorilla/mux](https://github.com/gorilla/mux)
-* [trie-mux/mux](github.com/teambition/trie-mux/mux)
+* [trie-mux/mux](https://github.com/teambition/trie-mux)
 * [xujiajun/gorouter](https://github.com/xujiajun/gorouter)
 
 
