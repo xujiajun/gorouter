@@ -319,13 +319,13 @@ And `:id` is short for `{id:[0-9]+}`, `:name` are short for `{name:[0-9a-zA-Z_]+
 
 ### Tested routers:
 
-* [bingo/mux](https://github.com/beego/mux)
+* [beego/mux](https://github.com/beego/mux)
 * [go-zoo/bone](https://github.com/go-zoo/bone)
 * [go-chi/chi](https://github.com/go-chi/chi)
 * [julienschmidt/httprouter](https://github.com/julienschmidt/httprouter)
 * [gorilla/mux](https://github.com/gorilla/mux)
 * [trie-mux/mux](github.com/teambition/trie-mux/mux)
-* [xujiajun/GoRouter](https://github.com/xujiajun/gorouter)
+* [xujiajun/gorouter](https://github.com/xujiajun/gorouter)
 
 
 Thanks the author of httprouter: [@julienschmidt](https://github.com/julienschmidt) give me advise about benchmark [issues/24](https://github.com/xujiajun/gorouter/issues/24)
