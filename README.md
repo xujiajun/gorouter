@@ -3,11 +3,11 @@
 
 ## Motivation
 
-I wanted a simple, fast router that has no unnecessary overhead using the standard library only, following good practices and well tested code.
+I wanted a simple, fast router that has no unnecessary overhead using the standard library only, support regexp, following good practices and well tested code.
 
 ## Features
 
-* Fast - see [benchmarks](#benchmarks)
+* Fast - see [Benchmarks](#benchmarks)
 * [URL parameters](#url-parameters)
 * [Regex parameters](#regex-parameters)
 * [Routes groups](#routes-groups)
@@ -310,53 +310,91 @@ And `:id` is short for `{id:[0-9]+}`, `:name` are short for `{name:[0-9a-zA-Z_]+
 
 > go test -bench=.
 
-Benchmark System:
+### Benchmark System:
 
 * Go version 1.9.2
 * OS:        Mac OS X 10.13.3 
 * Architecture:   x86_64
 * 16 GB 2133 MHz LPDDR3
 
-Tested routers:
+### Tested routers:
 
+* [bingo/mux](https://github.com/beego/mux)
+* [go-zoo/bone](https://github.com/go-zoo/bone)
+* [go-chi/chi](https://github.com/go-chi/chi)
 * [julienschmidt/httprouter](https://github.com/julienschmidt/httprouter)
-* [xujiajun/GoRouter](https://github.com/xujiajun/gorouter)
 * [gorilla/mux](https://github.com/gorilla/mux)
 * [trie-mux/mux](github.com/teambition/trie-mux/mux)
+* [xujiajun/GoRouter](https://github.com/xujiajun/gorouter)
 
 
-Result:
+Thanks the auther of httprouter: [@julienschmidt](https://github.com/julienschmidt) give me advise about benchmark [issues/24](https://github.com/xujiajun/gorouter/issues/24)
+
+## Result:
+
+Given some routing matching syntax differences, divide GithubAPI into two groups：
+
+### Using GithubAPI Result：
 
 ```
-➜  gorouter git:(master) ✗ go test -bench=.     
+BenchmarkBeegoMuxRouterWithGithubAPI-8   	   10000	    163941 ns/op	  134752 B/op	    1038 allocs/op
+BenchmarkBoneRouterWithGithubAPI-8       	     500	   2225313 ns/op	  720160 B/op	    8620 allocs/op
+BenchmarkTrieMuxRouterWithGithubAPI-8    	   20000	     93525 ns/op	   65856 B/op	     537 allocs/op
+BenchmarkHttpRouterWithGithubAPI-8       	   50000	     32473 ns/op	   13792 B/op	     167 allocs/op
+BenchmarkGoRouter1WithGithubAPI-8        	   20000	     61823 ns/op	   13832 B/op	     406 allocs/op
+
+```
+### Using GithubAPI2 Result：
+
+```
+BenchmarkGoRouter2WithGithubAPI2-8       	   20000	     64858 ns/op	   13832 B/op	     406 allocs/op
+BenchmarkChiRouterWithGithubAPI2-8       	   10000	    139495 ns/op	  104435 B/op	    1110 allocs/op
+BenchmarkMuxRouterWithGithubAPI2-8       	     300	   4781621 ns/op	   61468 B/op	     995 allocs/op
+```
+
+### All togther Result：
+
+```
+➜  gorouter git:(master) go test -bench=.
 GithubAPI Routes: 203
 GithubAPI2 Routes: 203
+   BeegoMuxRouter: 108144 Bytes
+   BoneRouter: 100992 Bytes
+   ChiRouter: 71512 Bytes
    HttpRouter: 37464 Bytes
-   GoRouter: 83616 Bytes
-   trie-mux: 135096 Bytes
-   MuxRouter: 1324192 Bytes
+   trie-mux: 133864 Bytes
+   MuxRouter: 1378384 Bytes
+   GoRouter1: 83824 Bytes
+   GoRouter2: 85584 Bytes
 goos: darwin
 goarch: amd64
 pkg: github.com/xujiajun/gorouter
-BenchmarkTrieMuxRouter-8           10000            692179 ns/op         1086465 B/op       2975 allocs/op
-BenchmarkHttpRouter-8              10000            627134 ns/op         1034366 B/op       2604 allocs/op
-BenchmarkGoRouter-8                10000            630895 ns/op         1034415 B/op       2843 allocs/op
-BenchmarkMuxRouter-8               10000           6396340 ns/op         1272876 B/op       4691 allocs/op
+BenchmarkBeegoMuxRouterWithGithubAPI-8   	   10000	    163941 ns/op	  134752 B/op	    1038 allocs/op
+BenchmarkBoneRouterWithGithubAPI-8       	     500	   2225313 ns/op	  720160 B/op	    8620 allocs/op
+BenchmarkTrieMuxRouterWithGithubAPI-8    	   20000	     93525 ns/op	   65856 B/op	     537 allocs/op
+BenchmarkHttpRouterWithGithubAPI-8       	   50000	     32473 ns/op	   13792 B/op	     167 allocs/op
+BenchmarkGoRouter1WithGithubAPI-8        	   20000	     61823 ns/op	   13832 B/op	     406 allocs/op
+BenchmarkGoRouter2WithGithubAPI2-8       	   20000	     64858 ns/op	   13832 B/op	     406 allocs/op
+BenchmarkChiRouterWithGithubAPI2-8       	   10000	    139495 ns/op	  104435 B/op	    1110 allocs/op
+BenchmarkMuxRouterWithGithubAPI2-8       	     300	   4781621 ns/op	   61468 B/op	     995 allocs/op
 PASS
-ok      github.com/xujiajun/gorouter    83.503s
+ok  	github.com/xujiajun/gorouter	15.013s
 
 ```
 
-Conclusions:
+### Conclusions:
 
-* Performance (xujiajun/gorouter ≈ julienschmidt/httprouter > teambition/trie-mux > gorilla/mux)
+* Performance (xujiajun/gorouter,julienschmidt/httprouter and teambition/trie-mux is fast)
 
-* Memory Consumption (xujiajun/gorouter ≈ julienschmidt/httprouter < teambition/trie-mux < gorilla/mux) 
+* Memory Consumption (xujiajun/gorouter and julienschmidt/httprouter is fewer) 
 
-* Features (xujiajun/gorouter, gorilla/mux and teambition/trie-mux support regexp, But julienschmidt/httprouter not support)
+* Features (julienschmidt/httprouter not support regexp，but others support it)
 
-> if you want a performance router which support regexp, maybe [xujiajun/gorouter](https://github.com/xujiajun/gorouter) is good choice.
+> if you want a hight performance router which support regexp, maybe [xujiajun/gorouter](https://github.com/xujiajun/gorouter) is good choice.
 
+> if you want a hight performance router which not support regexp, maybe [julienschmidt/httprouter](https://github.com/julienschmidt/httprouter) is good choice.
+
+In the end, as julienschmidt said `performance can not be the (only) criterion for choosing a router. Play around a bit with some of the routers, and choose the one you like best.`
 
 ## Contributing
 
