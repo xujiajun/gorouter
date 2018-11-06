@@ -79,7 +79,7 @@ func (tree *Tree) Add(pattern string, handle http.HandlerFunc, middleware ...Mid
 }
 
 // Find returns nodes that the request match the route pattern
-func (tree *Tree) Find(pattern string, isRegex int) (nodes []*Node) {
+func (tree *Tree) Find(pattern string, isRegex bool) (nodes []*Node) {
 	var (
 		node  = tree.root
 		queue []*Node
@@ -90,7 +90,7 @@ func (tree *Tree) Find(pattern string, isRegex int) (nodes []*Node) {
 		return
 	}
 
-	if isRegex == 0 {
+	if !isRegex {
 		pattern = trimPathPrefix(pattern)
 	}
 
@@ -102,7 +102,7 @@ func (tree *Tree) Find(pattern string, isRegex int) (nodes []*Node) {
 			return
 		}
 
-		if pattern == child.path && isRegex == 0 {
+		if pattern == child.path && !isRegex {
 			nodes = append(nodes, child)
 			return
 		}

@@ -149,7 +149,7 @@ func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		panic(fmt.Errorf("Error method or method is not registered "))
 	}
 
-	nodes := router.trees[r.Method].Find(requestUrl, 0)
+	nodes := router.trees[r.Method].Find(requestUrl, false)
 
 	if len(nodes) > 0 {
 		node := nodes[0]
@@ -171,7 +171,7 @@ func (router *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		res := strings.Split(requestUrl, "/")
 		prefix := res[1]
 
-		nodes := router.trees[r.Method].Find(prefix, 1)
+		nodes := router.trees[r.Method].Find(prefix, true)
 
 		for _, node := range nodes {
 			handler := node.handle
