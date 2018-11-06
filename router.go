@@ -96,17 +96,17 @@ func (router *Router) Handle(method string, path string, handle http.HandlerFunc
 		panic(fmt.Errorf("invalid method"))
 	}
 
-	root := router.trees[method]
-	if root == nil {
-		root = NewTree()
-		router.trees[method] = root
+	tree, ok := router.trees[method]
+	if !ok {
+		tree = NewTree()
+		router.trees[method] = tree
 	}
 
 	if router.prefix != "" {
 		path = router.prefix + "/" + path
 	}
 
-	root.Add(path, handle, router.middleware...)
+	tree.Add(path, handle, router.middleware...)
 }
 
 // GetParam return route param stored in r.
