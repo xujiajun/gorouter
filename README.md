@@ -3,7 +3,8 @@
 
 ## Motivation
 
-I wanted a simple and fast HTTP GO Router, which support regexp, why i prefer to support regexp， if a router not support，it will increase the logic to judge the type of parameter from the URL，it will increase the program complexity.so I searched the github，I found the router `julienschmidt/httprouter`，it is very fast router，but it is a pity that it not support regexp，later I found `gorilla/mux`，it is powerful，but I write a benchmark show me that it is slow. so I try to develop a new router which support regexp and it should be a fast router.Finally i did it, BTW it is my first GO open source project. it maybe the fastest GO http router which support regexp, about performance see my lastest [Benchmarks](#benchmarks).
+I wanted a simple and fast HTTP GO Router, which support regexp, why i prefer to support regexp，if a router not support，it will increase the logic to judge the type of parameter from the URL，it will increase the program complexity.So I searched the github，i found the router `julienschmidt/httprouter`，it is very fast router，but it is a pity that it not support regexp，later i found `gorilla/mux`，it is powerful，but i write a benchmark show me that it is slow. So i try to develop a new router which support regexp and it should be a fast router.Finally i did it and named `xujiajun/gorouter`, BTW it is my first GO open source project.
+It maybe the fastest GO http router which support regexp, about performance see my latest [Benchmarks](#benchmarks).
 
 ## Features
 
