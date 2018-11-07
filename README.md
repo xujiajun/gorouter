@@ -312,8 +312,8 @@ And `:id` is short for `{id:[0-9]+}`, `:name` are short for `{name:[0-9a-zA-Z_]+
 
 ### Benchmark System:
 
-* Go version 1.9.2
-* OS:        Mac OS X 10.13.3 
+* Go Version : go1.11.2 darwin/amd64
+* OS:        Mac OS X 10.13.6
 * Architecture:   x86_64
 * 16 GB 2133 MHz LPDDR3
 
@@ -337,48 +337,48 @@ Given some routing matching syntax differences, divide GithubAPI into two groups
 ### Using GithubAPI Result：
 
 ```
-BenchmarkBeegoMuxRouterWithGithubAPI-8   	   10000	    143859 ns/op	  134752 B/op	    1038 allocs/op
-BenchmarkBoneRouterWithGithubAPI-8       	    1000	   2062784 ns/op	  720160 B/op	    8620 allocs/op
-BenchmarkTrieMuxRouterWithGithubAPI-8    	   20000	     84975 ns/op	   65856 B/op	     537 allocs/op
-BenchmarkHttpRouterWithGithubAPI-8       	   50000	     29696 ns/op	   13792 B/op	     167 allocs/op
-BenchmarkGoRouter1WithGithubAPI-8        	   30000	     57576 ns/op	   13832 B/op	     406 allocs/op
+BenchmarkBeegoMuxRouterWithGithubAPI-8   	   10000	    142398 ns/op	  134752 B/op	    1038 allocs/op
+BenchmarkBoneRouterWithGithubAPI-8       	    1000	   2104486 ns/op	  720160 B/op	    8620 allocs/op
+BenchmarkTrieMuxRouterWithGithubAPI-8    	   20000	     80845 ns/op	   65856 B/op	     537 allocs/op
+BenchmarkHttpRouterWithGithubAPI-8       	   50000	     30169 ns/op	   13792 B/op	     167 allocs/op
+BenchmarkGoRouter1WithGithubAPI-8        	   30000	     57793 ns/op	   13832 B/op	     406 allocs/op
 
 ```
 ### Using GithubAPI2 Result：
 
 ```
-BenchmarkGoRouter2WithGithubAPI2-8       	   30000	     56968 ns/op	   13832 B/op	     406 allocs/op
-BenchmarkChiRouterWithGithubAPI2-8       	   10000	    131898 ns/op	  104436 B/op	    1110 allocs/op
-BenchmarkMuxRouterWithGithubAPI2-8       	     300	   4375015 ns/op	   61468 B/op	     995 allocs/op
+BenchmarkGoRouter2WithGithubAPI2-8       	   30000	     57613 ns/op	   13832 B/op	     406 allocs/op
+BenchmarkChiRouterWithGithubAPI2-8       	   10000	    143224 ns/op	  104436 B/op	    1110 allocs/op
+BenchmarkMuxRouterWithGithubAPI2-8       	     300	   4450731 ns/op	   61463 B/op	     995 allocs/op
 ```
 
 ### All togther Result：
 
 ```
-➜  gorouter git:(master) ✗ go test -bench=.
+➜  gorouter git:(master) go test -bench=.
 GithubAPI Routes: 203
 GithubAPI2 Routes: 203
-   BeegoMuxRouter: 109840 Bytes
+   BeegoMuxRouter: 111072 Bytes
    BoneRouter: 100992 Bytes
    ChiRouter: 71512 Bytes
-   HttpRouter: 37464 Bytes
-   trie-mux: 132968 Bytes
-   MuxRouter: 1378528 Bytes
-   GoRouter1: 83616 Bytes
-   GoRouter2: 85792 Bytes
+   HttpRouter: 37016 Bytes
+   trie-mux: 131128 Bytes
+   MuxRouter: 1378496 Bytes
+   GoRouter1: 83824 Bytes
+   GoRouter2: 85584 Bytes
 goos: darwin
 goarch: amd64
 pkg: github.com/xujiajun/gorouter
-BenchmarkBeegoMuxRouterWithGithubAPI-8   	   10000	    143859 ns/op	  134752 B/op	    1038 allocs/op
-BenchmarkBoneRouterWithGithubAPI-8       	    1000	   2062784 ns/op	  720160 B/op	    8620 allocs/op
-BenchmarkTrieMuxRouterWithGithubAPI-8    	   20000	     84975 ns/op	   65856 B/op	     537 allocs/op
-BenchmarkHttpRouterWithGithubAPI-8       	   50000	     29696 ns/op	   13792 B/op	     167 allocs/op
-BenchmarkGoRouter1WithGithubAPI-8        	   30000	     57576 ns/op	   13832 B/op	     406 allocs/op
-BenchmarkGoRouter2WithGithubAPI2-8       	   30000	     56968 ns/op	   13832 B/op	     406 allocs/op
-BenchmarkChiRouterWithGithubAPI2-8       	   10000	    131898 ns/op	  104436 B/op	    1110 allocs/op
-BenchmarkMuxRouterWithGithubAPI2-8       	     300	   4375015 ns/op	   61468 B/op	     995 allocs/op
+BenchmarkBeegoMuxRouterWithGithubAPI-8   	   10000	    142398 ns/op	  134752 B/op	    1038 allocs/op
+BenchmarkBoneRouterWithGithubAPI-8       	    1000	   2104486 ns/op	  720160 B/op	    8620 allocs/op
+BenchmarkTrieMuxRouterWithGithubAPI-8    	   20000	     80845 ns/op	   65856 B/op	     537 allocs/op
+BenchmarkHttpRouterWithGithubAPI-8       	   50000	     30169 ns/op	   13792 B/op	     167 allocs/op
+BenchmarkGoRouter1WithGithubAPI-8        	   30000	     57793 ns/op	   13832 B/op	     406 allocs/op
+BenchmarkGoRouter2WithGithubAPI2-8       	   30000	     57613 ns/op	   13832 B/op	     406 allocs/op
+BenchmarkChiRouterWithGithubAPI2-8       	   10000	    143224 ns/op	  104436 B/op	    1110 allocs/op
+BenchmarkMuxRouterWithGithubAPI2-8       	     300	   4450731 ns/op	   61463 B/op	     995 allocs/op
 PASS
-ok  	github.com/xujiajun/gorouter	15.816s
+ok  	github.com/xujiajun/gorouter	15.918s
 
 ```
 
