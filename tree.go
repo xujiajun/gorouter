@@ -95,10 +95,15 @@ func (tree *Tree) Find(pattern string, isRegex bool) (nodes []*Node) {
 	}
 
 	res := splitPattern(pattern)
-	for _, key := range res {
 
+	for _, key := range res {
 		child, ok := node.children[key]
-		if !ok {
+
+		if !ok && isRegex {
+			break
+		}
+
+		if !ok && !isRegex {
 			return
 		}
 
