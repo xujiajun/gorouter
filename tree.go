@@ -99,11 +99,11 @@ func (tree *Tree) Find(pattern string, isRegex bool) (nodes []*Node) {
 	for _, key := range res {
 		child, ok := node.children[key]
 
-		if !ok && isRegex{
+		if !ok && isRegex {
 			break
 		}
 
-		if !ok && !isRegex{
+		if !ok && !isRegex {
 			return
 		}
 

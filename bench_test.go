@@ -734,4 +734,3 @@ func BenchmarkChiRouterWithGithubAPI2(b *testing.B) {
 func BenchmarkMuxRouterWithGithubAPI2(b *testing.B) {
 	benchRoutes(b, muxRouter, githubAPI2)
 }
-
