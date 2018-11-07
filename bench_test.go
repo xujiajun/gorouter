@@ -417,7 +417,7 @@ var githubAPI2 = []route{
 	{"GET", "/orgs/{org:\\w+}/public_members/{user:\\w+}"},
 	{"PUT", "/orgs/{org:\\w+}/public_members/{user:\\w+}"},
 	{"DELETE", "/orgs/{org:\\w+}/public_members/{user:\\w+}"},
-	{"GET", "/orgs/{org}/teams"},
+	{"GET", "/orgs/{org:\\w+}/teams"},
 	{"GET", "/teams/{id:[0-9]+}"},
 	{"POST", "/orgs/{org:\\w+}/teams"},
 	//{"PATCH", "/teams/{id:[0-9]+}"},
@@ -467,7 +467,7 @@ var githubAPI2 = []route{
 	{"GET", "/repos/{owner:\\w+}/{repo:\\w+}/collaborators"},
 	{"GET", "/repos/{owner:\\w+}/{repo:\\w+}/collaborators/{user:\\w+}"},
 	{"PUT", "/repos/{owner:\\w+}/{repo:\\w+}/collaborators/{user:\\w+}"},
-	{"DELETE", "/repos/{owner}/{repo:\\w+}/collaborators/{user:\\w+}"},
+	{"DELETE", "/repos/{owner:\\w+}/{repo:\\w+}/collaborators/{user:\\w+}"},
 	{"GET", "/repos/{owner:\\w+}/{repo:\\w+}/comments"},
 	{"GET", "/repos/{owner:\\w+}/{repo:\\w+}/commits/{sha:\\w+}/comments"},
 	{"POST", "/repos/{owner:\\w+}/{repo:\\w+}/commits/{sha:\\w+}/comments"},
@@ -734,3 +734,4 @@ func BenchmarkChiRouterWithGithubAPI2(b *testing.B) {
 func BenchmarkMuxRouterWithGithubAPI2(b *testing.B) {
 	benchRoutes(b, muxRouter, githubAPI2)
 }
+
