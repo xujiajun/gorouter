@@ -10,14 +10,14 @@ import (
 )
 
 var (
-	defaultPattern          = `[\w]+`
-	idPattern               = `[\d]+`
-	idKey                   = `id`
-	generateParametersError = errors.New("params contains wrong parameters")
-	notFoundRouteError      = errors.New("cannot found route in tree")
-	notFoundMethodError     = errors.New("cannot found method in tree")
-	patternGrammarError     = errors.New("pattern grammar error")
-	methods                 = map[string]bool{
+	defaultPattern        = `[\w]+`
+	idPattern             = `[\d]+`
+	idKey                 = `id`
+	errGenerateParameters = errors.New("params contains wrong parameters")
+	errNotFoundRoute      = errors.New("cannot found route in tree")
+	errNotFoundMethod     = errors.New("cannot found method in tree")
+	errPatternGrammar     = errors.New("pattern grammar error")
+	methods               = map[string]bool{
 		http.MethodGet:    true,
 		http.MethodPost:   true,
 		http.MethodPut:    true,
@@ -131,12 +131,12 @@ func (router *Router) Group(prefix string) *Router {
 func (router *Router) Generate(method string, routeName string, params map[string]string) (string, error) {
 	tree, ok := router.trees[method]
 	if !ok {
-		return "", notFoundMethodError
+		return "", errNotFoundMethod
 	}
 
 	route, ok := tree.routes[routeName]
 	if !ok {
-		return "", notFoundRouteError
+		return "", errNotFoundRoute
 	}
 
 	var segments []string
@@ -147,12 +147,15 @@ func (router *Router) Generate(method string, routeName string, params map[strin
 			re := regexp.MustCompile(defaultPattern)
 			one := re.Find([]byte(key))
 			if one == nil {
-				return "", generateParametersError
+				return "", errGenerateParameters
 			}
 			if one != nil {
 				segments = append(segments, key)
+				continue
 			}
-		} else if string(segment[0]) == "{" {
+		}
+
+		if string(segment[0]) == "{" {
 			segmentLen := len(segment)
 
 			if string(segment[len(segment)-1]) == "}" {
@@ -161,18 +164,22 @@ func (router *Router) Generate(method string, routeName string, params map[strin
 				key := params[splitRes[0]]
 				one := re.Find([]byte(key))
 				if one == nil {
-					return "", generateParametersError
+					return "", errGenerateParameters
 				}
 				if one != nil {
 					segments = append(segments, key)
+					continue
 				}
 			} else {
-				return "", patternGrammarError
+				return "", errPatternGrammar
 			}
-		} else if string(segment[len(segment)-1]) == "}" && string(segment[0]) != "{" {
-			return "", patternGrammarError
+		}
+
+		if string(segment[len(segment)-1]) == "}" && string(segment[0]) != "{" {
+			return "", errPatternGrammar
 		} else {
 			segments = append(segments, segment)
+			continue
 		}
 	}
 
