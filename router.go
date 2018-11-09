@@ -2,6 +2,7 @@ package gorouter
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"regexp"
@@ -9,10 +10,14 @@ import (
 )
 
 var (
-	defaultPattern = `[\w]+`
-	idPattern      = `[\d]+`
-	idKey          = `id`
-	methods        = map[string]bool{
+	defaultPattern          = `[\w]+`
+	idPattern               = `[\d]+`
+	idKey                   = `id`
+	generateParametersError = errors.New("params contains wrong parameters")
+	notFoundRouteError      = errors.New("cannot found route in tree")
+	notFoundMethodError     = errors.New("cannot found method in tree")
+	patternGrammarError     = errors.New("pattern grammar error")
+	methods                 = map[string]bool{
 		http.MethodGet:    true,
 		http.MethodPost:   true,
 		http.MethodPut:    true,
@@ -24,6 +29,7 @@ var (
 type (
 	// MiddlewareType is a public type that is used for middleware
 	MiddlewareType func(next http.HandlerFunc) http.HandlerFunc
+
 	// Router is a simple HTTP route multiplexer that parses a request path,
 	// records any URL params, and executes an end handler.
 	Router struct {
@@ -31,11 +37,17 @@ type (
 		// The middleware stack
 		middleware []MiddlewareType
 		// the tree routers
-		trees map[string]*Tree
+		trees      map[string]*Tree
+		parameters Parameters
 		// Custom route not found handler
 		notFound http.HandlerFunc
 		// PanicHandler for handling panic.
 		PanicHandler func(w http.ResponseWriter, req *http.Request, err interface{})
+	}
+
+	// Parameters records some parameters
+	Parameters struct {
+		routeName string
 	}
 )
 
@@ -76,6 +88,36 @@ func (router *Router) PATCH(path string, handle http.HandlerFunc) {
 	router.Handle(http.MethodPatch, path, handle)
 }
 
+// GETAndName is short for `GET` and Named routeName
+func (router *Router) GETAndName(path string, handle http.HandlerFunc, routeName string) {
+	router.parameters.routeName = routeName
+	router.GET(path, handle)
+}
+
+// POSTAndName is short for `POST` and Named routeName
+func (router *Router) POSTAndName(path string, handle http.HandlerFunc, routeName string) {
+	router.parameters.routeName = routeName
+	router.POST(path, handle)
+}
+
+// DELETEAndName is short for `DELETE` and Named routeName
+func (router *Router) DELETEAndName(path string, handle http.HandlerFunc, routeName string) {
+	router.parameters.routeName = routeName
+	router.DELETE(path, handle)
+}
+
+// PUTAndName is short for `PUT` and Named routeName
+func (router *Router) PUTAndName(path string, handle http.HandlerFunc, routeName string) {
+	router.parameters.routeName = routeName
+	router.PUT(path, handle)
+}
+
+// PATCHAndName is short for `PATCH` and Named routeName
+func (router *Router) PATCHAndName(path string, handle http.HandlerFunc, routeName string) {
+	router.parameters.routeName = routeName
+	router.PATCH(path, handle)
+}
+
 // Group define routes groups If there is a path prefix that use `prefix`
 func (router *Router) Group(prefix string) *Router {
 	return &Router{
@@ -83,6 +125,58 @@ func (router *Router) Group(prefix string) *Router {
 		trees:      router.trees,
 		middleware: router.middleware,
 	}
+}
+
+// Generate returns reverse routing by method, routeName and params
+func (router *Router) Generate(method string, routeName string, params map[string]string) (string, error) {
+	tree, ok := router.trees[method]
+	if !ok {
+		return "", notFoundMethodError
+	}
+
+	route, ok := tree.routes[routeName]
+	if !ok {
+		return "", notFoundRouteError
+	}
+
+	var segments []string
+	res := splitPattern(route.path)
+	for _, segment := range res {
+		if string(segment[0]) == ":" {
+			key := params[string(segment[1:])]
+			re := regexp.MustCompile(defaultPattern)
+			one := re.Find([]byte(key))
+			if one == nil {
+				return "", generateParametersError
+			}
+			if one != nil {
+				segments = append(segments, key)
+			}
+		} else if string(segment[0]) == "{" {
+			segmentLen := len(segment)
+
+			if string(segment[len(segment)-1]) == "}" {
+				splitRes := strings.Split(string(segment[1:segmentLen-1]), ":")
+				re := regexp.MustCompile(splitRes[1])
+				key := params[splitRes[0]]
+				one := re.Find([]byte(key))
+				if one == nil {
+					return "", generateParametersError
+				}
+				if one != nil {
+					segments = append(segments, key)
+				}
+			} else {
+				return "", patternGrammarError
+			}
+		} else if string(segment[len(segment)-1]) == "}" && string(segment[0]) != "{" {
+			return "", patternGrammarError
+		} else {
+			segments = append(segments, segment)
+		}
+	}
+
+	return "/" + strings.Join(segments, "/"), nil
 }
 
 // NotFoundFunc registers a handler when the request route is not found
@@ -105,7 +199,9 @@ func (router *Router) Handle(method string, path string, handle http.HandlerFunc
 	if router.prefix != "" {
 		path = router.prefix + "/" + path
 	}
-
+	if routeName := router.parameters.routeName; routeName != "" {
+		tree.parameters.routeName = routeName
+	}
 	tree.Add(path, handle, router.middleware...)
 }
 
