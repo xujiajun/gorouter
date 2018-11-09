@@ -177,10 +177,9 @@ func (router *Router) Generate(method string, routeName string, params map[strin
 
 		if string(segment[len(segment)-1]) == "}" && string(segment[0]) != "{" {
 			return "", errPatternGrammar
-		} else {
-			segments = append(segments, segment)
-			continue
 		}
+		segments = append(segments, segment)
+		continue
 	}
 
 	return "/" + strings.Join(segments, "/"), nil
