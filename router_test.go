@@ -452,3 +452,122 @@ func TestRouter_Match(t *testing.T) {
 		t.Fatal("TestRouter_Match test fail")
 	}
 }
+
+func TestRouter_Generate(t *testing.T) {
+	mux := gorouter.New()
+
+	routeName1 := "user_event"
+	params := make(map[string]string)
+	params["user"] = "xujiajun"
+
+	//GETAndName
+	mux.GETAndName("/users/:user/events", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("/users/:user/events"))
+	}, routeName1)
+
+	if url, _ := mux.Generate(http.MethodGet, routeName1, params); url != "/users/xujiajun/events" {
+		t.Fatal("TestRouter_Generate test fail")
+	}
+
+	routeName2 := "user_repos_keys"
+	params = make(map[string]string)
+	params["owner"] = "xujiajun"
+	params["repo"] = "xujiajun_repo"
+
+	//POSTAndName
+	mux.POSTAndName("/repos/{owner:\\w+}/{repo:\\w+}/keys", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("/users/:user/repos"))
+	}, routeName2)
+
+	if url, _ := mux.Generate(http.MethodPost, routeName2, params); url != "/repos/xujiajun/xujiajun_repo/keys" {
+		t.Fatal("TestRouter_Generate test fail")
+	}
+
+	//DELETEAndName
+	routeName3 := "repos_releases"
+	mux.DELETEAndName("/repos/{owner:\\w+}/{repo:\\w+}/releases/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("/repos/{owner:\\w+}/{repo:\\w+}/releases/{id:[0-9]+}"))
+	}, routeName3)
+	params = make(map[string]string)
+	params["owner"] = "xujiajun"
+	params["repo"] = "xujiajun_repo"
+	params["id"] = "100"
+	if url, _ := mux.Generate(http.MethodDelete, routeName3, params); url != "/repos/xujiajun/xujiajun_repo/releases/100" {
+		t.Fatal("TestRouter_Generate test fail")
+	}
+
+	//PUTAndName
+	routeName4 := "user_following"
+	params = make(map[string]string)
+	params["user"] = "xujiajun001"
+	mux.PUTAndName("/user/following/{user:\\w+}", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("/user/following/{user:\\w+}"))
+	}, routeName4)
+
+	if url, _ := mux.Generate(http.MethodPut, routeName4, params); url != "/user/following/xujiajun001" {
+		t.Fatal("TestRouter_Generate test fail")
+	}
+
+	//PATCHAndName
+	routeName6 := "repos_keys"
+	params = make(map[string]string)
+	params["owner"] = "xujiajun001"
+	params["repo"] = "xujiajun_repo"
+	params["id"] = "100"
+	mux.PATCHAndName("/repos/:owner/:repo/keys/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("/repos/:owner/:repo/keys/{id:[0-9]+}"))
+	}, routeName6)
+
+	if url, _ := mux.Generate(http.MethodPatch, routeName6, params); url != "/repos/xujiajun001/xujiajun_repo/keys/100" {
+		t.Fatal("TestRouter_Generate test fail")
+	}
+
+	//params contains wrong parameters
+	routeName5 := "user_event3"
+	mux.GETAndName("/users/{user:\\w+}/events", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("/users/{user:\\w+}/events"))
+	}, routeName5)
+	params = make(map[string]string)
+	params["user"] = "@@@@"
+	if _, err := mux.Generate(http.MethodGet, routeName5, params); err == nil {
+		t.Fatal("TestRouter_Generate test fail")
+	}
+	mux.GETAndName("/users/:user/events", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("/users/:user/events"))
+	}, routeName5)
+	params = make(map[string]string)
+	params["user"] = "@@@@"
+	if _, err := mux.Generate(http.MethodGet, routeName5, params); err == nil {
+		t.Fatal("TestRouter_Generate test fail")
+	}
+
+	//pattern grammar error
+	routeName7 := "user_event4"
+	mux.GETAndName("/users/user:\\w+}/events", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("/users/user:\\w+}/events"))
+	}, routeName7)
+	params = make(map[string]string)
+	params["user"] = "xujiajun"
+	if _, err := mux.Generate(http.MethodGet, routeName7, params); err == nil {
+		t.Fatal("TestRouter_Generate test fail")
+	}
+
+	mux.GETAndName("/users/{user:\\w+/events", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("/users/{user:\\w+/events"))
+	}, routeName7)
+	params = make(map[string]string)
+	params["user"] = "xujiajun"
+	if _, err := mux.Generate(http.MethodGet, routeName7, params); err == nil {
+		t.Fatal("TestRouter_Generate test fail")
+	}
+
+	//cannot found route in tree
+	if _, err := mux.Generate("GET", "notFoundRouteName", params); err == nil {
+		t.Fatal("TestRouter_Generate test fail")
+	}
+
+	//cannot found method in tree
+	if _, err := mux.Generate("METHOD", routeName5, params); err == nil {
+		t.Fatal("TestRouter_Generate test fail")
+	}
+}

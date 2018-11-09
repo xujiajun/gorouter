@@ -8,7 +8,9 @@ import (
 type (
 	// Tree records node
 	Tree struct {
-		root *Node
+		root       *Node
+		parameters Parameters
+		routes     map[string]*Node
 	}
 
 	// Node records any URL params, and executes an end handler.
@@ -40,42 +42,47 @@ func NewNode(key string, depth int) *Node {
 // NewTree returns a newly initialized Tree object that implements the Tree
 func NewTree() *Tree {
 	return &Tree{
-		root: NewNode("/", 1),
+		root:   NewNode("/", 1),
+		routes: make(map[string]*Node),
 	}
 }
 
 // Add use `pattern` 、handle、middleware stack as node register to tree
 func (tree *Tree) Add(pattern string, handle http.HandlerFunc, middleware ...MiddlewareType) {
-	var parent = tree.root
+	var currentNode = tree.root
 
-	if pattern != parent.key {
+	if pattern != currentNode.key {
 
 		pattern = trimPathPrefix(pattern)
 		res := splitPattern(pattern)
 
 		for _, key := range res {
-			node, ok := parent.children[key]
+			node, ok := currentNode.children[key]
 
 			if !ok {
-				node = NewNode(key, parent.depth+1)
+				node = NewNode(key, currentNode.depth+1)
 				if len(middleware) > 0 {
 					node.middleware = append(node.middleware, middleware...)
 				}
 
-				parent.children[key] = node
+				currentNode.children[key] = node
 			}
 
-			parent = node
+			currentNode = node
 		}
 
 	}
-	if len(middleware) > 0 && parent.depth == 1 {
-		parent.middleware = append(parent.middleware, middleware...)
+	if len(middleware) > 0 && currentNode.depth == 1 {
+		currentNode.middleware = append(currentNode.middleware, middleware...)
 	}
 
-	parent.handle = handle
-	parent.isPattern = true
-	parent.path = pattern
+	currentNode.handle = handle
+	currentNode.isPattern = true
+	currentNode.path = pattern
+
+	if routeName := tree.parameters.routeName; routeName != "" {
+		tree.routes[routeName] = currentNode
+	}
 }
 
 // Find returns nodes that the request match the route pattern
