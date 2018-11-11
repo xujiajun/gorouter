@@ -28,7 +28,7 @@ I wanted a simple and fast HTTP GO router, which supports regexp. I prefer to su
 ## Installation
 
 ```
-go get github.com/xujiajun/gorouter
+go get -u github.com/xujiajun/gorouter
 ```
 
 ## Usage
