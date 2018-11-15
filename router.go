@@ -14,15 +14,15 @@ var (
 	idPattern             = `[\d]+`
 	idKey                 = `id`
 	errGenerateParameters = errors.New("params contains wrong parameters")
-	errNotFoundRoute      = errors.New("cannot found route in tree")
-	errNotFoundMethod     = errors.New("cannot found method in tree")
+	errNotFoundRoute      = errors.New("cannot find route in tree")
+	errNotFoundMethod     = errors.New("cannot find method in tree")
 	errPatternGrammar     = errors.New("pattern grammar error")
-	methods               = map[string]bool{
-		http.MethodGet:    true,
-		http.MethodPost:   true,
-		http.MethodPut:    true,
-		http.MethodDelete: true,
-		http.MethodPatch:  true,
+	methods               = map[string]struct{}{
+		http.MethodGet:    {},
+		http.MethodPost:   {},
+		http.MethodPut:    {},
+		http.MethodDelete: {},
+		http.MethodPatch:  {},
 	}
 )
 
@@ -118,7 +118,7 @@ func (router *Router) PATCHAndName(path string, handle http.HandlerFunc, routeNa
 	router.PATCH(path, handle)
 }
 
-// Group define routes groups If there is a path prefix that use `prefix`
+// Group define routes groups if there is a path prefix that uses `prefix`
 func (router *Router) Group(prefix string) *Router {
 	return &Router{
 		prefix:     prefix,
@@ -190,7 +190,7 @@ func (router *Router) NotFoundFunc(handler http.HandlerFunc) {
 	router.notFound = handler
 }
 
-// Handle registers a new request handle with the given path and method.
+// Handle registers a new request handler with the given path and method.
 func (router *Router) Handle(method string, path string, handle http.HandlerFunc) {
 	if _, ok := methods[method]; !ok {
 		panic(fmt.Errorf("invalid method"))
@@ -211,7 +211,7 @@ func (router *Router) Handle(method string, path string, handle http.HandlerFunc
 	tree.Add(path, handle, router.middleware...)
 }
 
-// GetParam return route param stored in r.
+// GetParam returns route param stored in http.request.
 func GetParam(r *http.Request, key string) string {
 	return GetAllParams(r)[key]
 }
@@ -219,13 +219,13 @@ func GetParam(r *http.Request, key string) string {
 // contextKeyType is a private struct that is used for storing values in net.Context
 type contextKeyType struct{}
 
-// contextKey is the key that is used to store values in the net.Context for each request
+// contextKey is the key that is used to store values in net.Context for each request
 var contextKey = contextKeyType{}
 
 // paramsMapType is a private type that is used to store route params
 type paramsMapType map[string]string
 
-// GetAllParams return all route params stored in r.
+// GetAllParams returns all route params stored in http.Request.
 func GetAllParams(r *http.Request) paramsMapType {
 	values, ok := r.Context().Value(contextKey).(paramsMapType)
 	if ok {
@@ -309,7 +309,7 @@ func (router *Router) HandleNotFound(w http.ResponseWriter, r *http.Request, mid
 	http.NotFound(w, r)
 }
 
-// handle execute middleware chain
+// handle executes middleware chain
 func handle(w http.ResponseWriter, r *http.Request, handler http.HandlerFunc, middleware []MiddlewareType) {
 	var baseHandler = handler
 	for _, m := range middleware {
@@ -318,13 +318,13 @@ func handle(w http.ResponseWriter, r *http.Request, handler http.HandlerFunc, mi
 	baseHandler(w, r)
 }
 
-// Match check if the request match the route Pattern
+// Match checks if the request matches the route pattern
 func (router *Router) Match(requestUrl string, path string) bool {
 	_, ok := router.matchAndParse(requestUrl, path)
 	return ok
 }
 
-// matchAndParse check if the request matches the route path and returns a map of the parsed
+// matchAndParse checks if the request matches the route path and returns a map of the parsed
 func (router *Router) matchAndParse(requestUrl string, path string) (paramsMapType, bool) {
 	res := strings.Split(path, "/")
 
