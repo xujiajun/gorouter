@@ -353,6 +353,7 @@ And `:id` is short for `{id:[0-9]+}`, `:name` are short for `{name:[0-9a-zA-Z_]+
 * OS:        Mac OS X 10.13.6
 * Architecture:   x86_64
 * 16 GB 2133 MHz LPDDR3
+* CPU: 3.1 GHz Intel Core i7
 
 ### Tested routers:
 
