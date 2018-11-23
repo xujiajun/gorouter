@@ -145,8 +145,7 @@ func (router *Router) Generate(method string, routeName string, params map[strin
 		if string(segment[0]) == ":" {
 			key := params[string(segment[1:])]
 			re := regexp.MustCompile(defaultPattern)
-			one := re.Find([]byte(key))
-			if one == nil {
+			if one := re.Find([]byte(key)); one == nil {
 				return "", errGenerateParameters
 			}
 			segments = append(segments, key)
@@ -160,8 +159,7 @@ func (router *Router) Generate(method string, routeName string, params map[strin
 				splitRes := strings.Split(string(segment[1:segmentLen-1]), ":")
 				re := regexp.MustCompile(splitRes[1])
 				key := params[splitRes[0]]
-				one := re.Find([]byte(key))
-				if one == nil {
+				if one := re.Find([]byte(key)); one == nil {
 					return "", errGenerateParameters
 				}
 				segments = append(segments, key)
