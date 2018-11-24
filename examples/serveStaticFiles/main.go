@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/xujiajun/gorouter"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/xujiajun/gorouter"
 )
 
 //ServeFiles serve static resources
