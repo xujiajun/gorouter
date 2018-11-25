@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/xujiajun/gorouter"
 	"log"
 	"net/http"
+
+	"github.com/xujiajun/gorouter"
 )
 
 func main() {

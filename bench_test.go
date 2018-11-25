@@ -1,6 +1,11 @@
 package gorouter_test
 
 import (
+	"net/http"
+	"net/http/httptest"
+	"runtime"
+	"testing"
+
 	beegomux "github.com/beego/mux"
 	"github.com/go-chi/chi"
 	"github.com/go-zoo/bone"
@@ -8,10 +13,6 @@ import (
 	"github.com/julienschmidt/httprouter"
 	triemux "github.com/teambition/trie-mux/mux"
 	"github.com/xujiajun/gorouter"
-	"net/http"
-	"net/http/httptest"
-	"runtime"
-	"testing"
 )
 
 type route struct {

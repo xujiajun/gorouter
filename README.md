@@ -41,6 +41,7 @@ package main
 import (
 	"log"
 	"net/http"
+
 	"github.com/xujiajun/gorouter"
 )
 
@@ -60,9 +61,10 @@ func main() {
 package main
 
 import (
-	"github.com/xujiajun/gorouter"
 	"log"
 	"net/http"
+
+	"github.com/xujiajun/gorouter"
 )
 
 func main() {
@@ -87,9 +89,10 @@ func main() {
 package main
 
 import (
-	"github.com/xujiajun/gorouter"
 	"log"
 	"net/http"
+
+	"github.com/xujiajun/gorouter"
 )
 
 func main() {
@@ -111,9 +114,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/xujiajun/gorouter"
 	"log"
 	"net/http"
+
+	"github.com/xujiajun/gorouter"
 )
 
 func usersHandler(w http.ResponseWriter, r *http.Request) {
@@ -135,8 +139,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/xujiajun/gorouter"
 	"net/http"
+
+	"github.com/xujiajun/gorouter"
 )
 
 func main() {
@@ -171,9 +176,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/xujiajun/gorouter"
 	"log"
 	"net/http"
+
+	"github.com/xujiajun/gorouter"
 )
 
 func notFoundFunc(w http.ResponseWriter, r *http.Request) {
@@ -199,9 +205,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/xujiajun/gorouter"
 	"log"
 	"net/http"
+
+	"github.com/xujiajun/gorouter"
 )
 
 func main() {
@@ -227,9 +234,10 @@ package main
 
 import (
 	"fmt"
-	"github.com/xujiajun/gorouter"
 	"log"
 	"net/http"
+
+	"github.com/xujiajun/gorouter"
 )
 
 type statusRecorder struct {
@@ -288,10 +296,11 @@ func main() {
 package main
 
 import (
-	"github.com/xujiajun/gorouter"
 	"log"
 	"net/http"
 	"os"
+	
+	"github.com/xujiajun/gorouter"
 )
 
 //ServeFiles serve static resources

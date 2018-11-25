@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/xujiajun/gorouter"
 	"net/http"
+
+	"github.com/xujiajun/gorouter"
 )
 
 func main() {

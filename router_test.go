@@ -2,11 +2,11 @@ package gorouter_test
 
 import (
 	"fmt"
-	"github.com/xujiajun/gorouter"
-	//"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/xujiajun/gorouter"
 )
 
 var (
