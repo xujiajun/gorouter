@@ -16,7 +16,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/julienschmidt/httprouter"
 	triemux "github.com/teambition/trie-mux/mux"
-	//"github.com/xujiajun/gorouter"
 )
 
 type route struct {
