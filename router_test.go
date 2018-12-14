@@ -1,12 +1,14 @@
-package gorouter_test
+// Copyright 2018 The xujiajun/gorouter Authors. All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
+
+package gorouter
 
 import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
-	"github.com/xujiajun/gorouter"
 )
 
 var (
@@ -19,7 +21,7 @@ func init() {
 }
 
 func TestRouter_GET(t *testing.T) {
-	router := gorouter.New()
+	router := New()
 
 	rr := httptest.NewRecorder()
 
@@ -41,7 +43,7 @@ func TestRouter_GET(t *testing.T) {
 }
 
 func TestRouter_POST(t *testing.T) {
-	router := gorouter.New()
+	router := New()
 	rr := httptest.NewRecorder()
 
 	req, err := http.NewRequest(http.MethodPost, "/hi", nil)
@@ -62,7 +64,7 @@ func TestRouter_POST(t *testing.T) {
 }
 
 func TestRouter_DELETE(t *testing.T) {
-	router := gorouter.New()
+	router := New()
 	rr := httptest.NewRecorder()
 
 	req, err := http.NewRequest(http.MethodDelete, "/hi", nil)
@@ -83,7 +85,7 @@ func TestRouter_DELETE(t *testing.T) {
 }
 
 func TestRouter_PATCH(t *testing.T) {
-	router := gorouter.New()
+	router := New()
 	rr := httptest.NewRecorder()
 
 	req, err := http.NewRequest(http.MethodPatch, "/hi", nil)
@@ -104,7 +106,7 @@ func TestRouter_PATCH(t *testing.T) {
 }
 
 func TestRouter_PUT(t *testing.T) {
-	router := gorouter.New()
+	router := New()
 	rr := httptest.NewRecorder()
 
 	req, err := http.NewRequest(http.MethodPut, "/hi", nil)
@@ -125,7 +127,7 @@ func TestRouter_PUT(t *testing.T) {
 }
 
 func TestRouter_Group(t *testing.T) {
-	router := gorouter.New()
+	router := New()
 
 	rr := httptest.NewRecorder()
 
@@ -149,7 +151,7 @@ func TestRouter_Group(t *testing.T) {
 }
 
 func TestRouter_CustomHandleNotFound(t *testing.T) {
-	router := gorouter.New()
+	router := New()
 
 	rr := httptest.NewRecorder()
 
@@ -177,7 +179,7 @@ func TestRouter_CustomHandleNotFound(t *testing.T) {
 }
 
 func TestRouter_HandleNotFound(t *testing.T) {
-	router := gorouter.New()
+	router := New()
 
 	rr := httptest.NewRecorder()
 
@@ -199,7 +201,7 @@ func TestRouter_HandleNotFound(t *testing.T) {
 }
 
 func TestRouter_CustomPanicHandler(t *testing.T) {
-	router := gorouter.New()
+	router := New()
 
 	rr := httptest.NewRecorder()
 
@@ -219,7 +221,7 @@ func TestRouter_CustomPanicHandler(t *testing.T) {
 }
 
 func TestGetParam(t *testing.T) {
-	router := gorouter.New()
+	router := New()
 
 	rr := httptest.NewRecorder()
 
@@ -231,7 +233,7 @@ func TestGetParam(t *testing.T) {
 	}
 
 	router.GET("/test/:id", func(w http.ResponseWriter, r *http.Request) {
-		id := gorouter.GetParam(r, "id")
+		id := GetParam(r, "id")
 		if id != param {
 			t.Fatal("TestGetParam test fail")
 		}
@@ -240,7 +242,7 @@ func TestGetParam(t *testing.T) {
 }
 
 func TestGetAllParams(t *testing.T) {
-	router := gorouter.New()
+	router := New()
 
 	rr := httptest.NewRecorder()
 
@@ -253,7 +255,7 @@ func TestGetAllParams(t *testing.T) {
 	}
 
 	router.GET("/param1/:param1/param2/:param2", func(w http.ResponseWriter, r *http.Request) {
-		params := gorouter.GetAllParams(r)
+		params := GetAllParams(r)
 
 		if params["param1"] != param1 {
 			t.Fatal("TestGetAllParams test fail")
@@ -267,7 +269,7 @@ func TestGetAllParams(t *testing.T) {
 }
 
 func TestGetAllParamsMiss(t *testing.T) {
-	router := gorouter.New()
+	router := New()
 
 	rr := httptest.NewRecorder()
 
@@ -278,7 +280,7 @@ func TestGetAllParamsMiss(t *testing.T) {
 	}
 
 	router.GET("/param1", func(w http.ResponseWriter, r *http.Request) {
-		params := gorouter.GetAllParams(r)
+		params := GetAllParams(r)
 
 		if params != nil {
 			t.Fatal("TestGetAllParams test fail")
@@ -296,7 +298,7 @@ func withLogging(next http.HandlerFunc) http.HandlerFunc {
 }
 
 func TestRouter_Use(t *testing.T) {
-	router := gorouter.New()
+	router := New()
 
 	rr := httptest.NewRecorder()
 
@@ -319,7 +321,7 @@ func TestRouter_Use(t *testing.T) {
 }
 
 func TestRouter_UseForRoot(t *testing.T) {
-	router := gorouter.New()
+	router := New()
 
 	rr := httptest.NewRecorder()
 
@@ -343,7 +345,7 @@ func TestRouter_UseForRoot(t *testing.T) {
 }
 
 func TestRouter_Regex(t *testing.T) {
-	router := gorouter.New()
+	router := New()
 
 	rr := httptest.NewRecorder()
 
@@ -355,7 +357,7 @@ func TestRouter_Regex(t *testing.T) {
 
 	router.GET("/param/{id:[0-9]+}", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, expected)
-		id := gorouter.GetParam(r, "id")
+		id := GetParam(r, "id")
 		if id != "1" {
 			t.Fatal("TestGetAllParams test fail")
 		}
@@ -369,7 +371,7 @@ func TestRouter_Regex(t *testing.T) {
 }
 
 func TestRouter_HandleRoot(t *testing.T) {
-	router := gorouter.New()
+	router := New()
 
 	rr := httptest.NewRecorder()
 
@@ -393,7 +395,7 @@ func TestRouter_HandleRoot(t *testing.T) {
 }
 
 func TestRouter_HandlePanic(t *testing.T) {
-	router := gorouter.New()
+	router := New()
 
 	rr := httptest.NewRecorder()
 
@@ -422,7 +424,7 @@ func TestRouter_HandlePanic(t *testing.T) {
 }
 
 func TestRouter_Match(t *testing.T) {
-	router := gorouter.New()
+	router := New()
 	requestUrl := "/xxx/1/yyy/2"
 
 	ok := router.Match(requestUrl, "/xxx/:param1/yyy/:param2")
@@ -454,7 +456,7 @@ func TestRouter_Match(t *testing.T) {
 }
 
 func TestRouter_Generate(t *testing.T) {
-	mux := gorouter.New()
+	mux := New()
 
 	routeName1 := "user_event"
 	params := make(map[string]string)

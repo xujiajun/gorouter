@@ -1,3 +1,7 @@
+// Copyright 2018 The xujiajun/gorouter Authors. All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
+
 package gorouter
 
 import (
@@ -10,14 +14,16 @@ import (
 )
 
 var (
-	defaultPattern        = `[\w]+`
-	idPattern             = `[\d]+`
-	idKey                 = `id`
-	errGenerateParameters = errors.New("params contains wrong parameters")
-	errNotFoundRoute      = errors.New("cannot find route in tree")
-	errNotFoundMethod     = errors.New("cannot find method in tree")
-	errPatternGrammar     = errors.New("pattern grammar error")
-	methods               = map[string]struct{}{
+	defaultPattern = `[\w]+`
+	idPattern      = `[\d]+`
+	idKey          = `id`
+
+	ErrGenerateParameters = errors.New("params contains wrong parameters")
+	ErrNotFoundRoute      = errors.New("cannot find route in tree")
+	ErrNotFoundMethod     = errors.New("cannot find method in tree")
+	ErrPatternGrammar     = errors.New("pattern grammar error")
+
+	methods = map[string]struct{}{
 		http.MethodGet:    {},
 		http.MethodPost:   {},
 		http.MethodPut:    {},
@@ -131,12 +137,12 @@ func (router *Router) Group(prefix string) *Router {
 func (router *Router) Generate(method string, routeName string, params map[string]string) (string, error) {
 	tree, ok := router.trees[method]
 	if !ok {
-		return "", errNotFoundMethod
+		return "", ErrNotFoundMethod
 	}
 
 	route, ok := tree.routes[routeName]
 	if !ok {
-		return "", errNotFoundRoute
+		return "", ErrNotFoundRoute
 	}
 
 	var segments []string
@@ -146,7 +152,7 @@ func (router *Router) Generate(method string, routeName string, params map[strin
 			key := params[string(segment[1:])]
 			re := regexp.MustCompile(defaultPattern)
 			if one := re.Find([]byte(key)); one == nil {
-				return "", errGenerateParameters
+				return "", ErrGenerateParameters
 			}
 			segments = append(segments, key)
 			continue
@@ -160,16 +166,16 @@ func (router *Router) Generate(method string, routeName string, params map[strin
 				re := regexp.MustCompile(splitRes[1])
 				key := params[splitRes[0]]
 				if one := re.Find([]byte(key)); one == nil {
-					return "", errGenerateParameters
+					return "", ErrGenerateParameters
 				}
 				segments = append(segments, key)
 				continue
 			}
-			return "", errPatternGrammar
+			return "", ErrPatternGrammar
 		}
 
 		if string(segment[len(segment)-1]) == "}" && string(segment[0]) != "{" {
-			return "", errPatternGrammar
+			return "", ErrPatternGrammar
 		}
 		segments = append(segments, segment)
 		continue

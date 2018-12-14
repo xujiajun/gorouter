@@ -1,4 +1,8 @@
-package gorouter_test
+// Copyright 2018 The xujiajun/gorouter Authors. All rights reserved.
+// Use of this source code is governed by a MIT-style
+// license that can be found in the LICENSE file.
+
+package gorouter
 
 import (
 	"net/http"
@@ -12,7 +16,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/julienschmidt/httprouter"
 	triemux "github.com/teambition/trie-mux/mux"
-	"github.com/xujiajun/gorouter"
+	//"github.com/xujiajun/gorouter"
 )
 
 type route struct {
@@ -657,7 +661,7 @@ func init() {
 	})
 
 	calcMem("GoRouter1", func() {
-		router := gorouter.New()
+		router := New()
 		handler := func(w http.ResponseWriter, _ *http.Request) {
 			w.WriteHeader(204)
 		}
@@ -668,7 +672,7 @@ func init() {
 	})
 
 	calcMem("GoRouter2", func() {
-		router := gorouter.New()
+		router := New()
 		handler := func(w http.ResponseWriter, _ *http.Request) {
 			w.WriteHeader(204)
 		}
