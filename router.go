@@ -14,14 +14,21 @@ import (
 )
 
 var (
+	// ErrGenerateParameters is returned when generating a route with wrong parameters.
+	ErrGenerateParameters = errors.New("params contains wrong parameters")
+
+	// ErrNotFoundRoute is returned when generating a route that can not find route in tree.
+	ErrNotFoundRoute = errors.New("cannot find route in tree")
+
+	// ErrNotFoundMethod is returned when generating a route that can not find method in tree.
+	ErrNotFoundMethod = errors.New("cannot find method in tree")
+
+	// ErrPatternGrammar is returned when generating a route that pattern grammar error.
+	ErrPatternGrammar = errors.New("pattern grammar error")
+
 	defaultPattern = `[\w]+`
 	idPattern      = `[\d]+`
 	idKey          = `id`
-
-	ErrGenerateParameters = errors.New("params contains wrong parameters")
-	ErrNotFoundRoute      = errors.New("cannot find route in tree")
-	ErrNotFoundMethod     = errors.New("cannot find method in tree")
-	ErrPatternGrammar     = errors.New("pattern grammar error")
 
 	methods = map[string]struct{}{
 		http.MethodGet:    {},

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a MIT-style
 // license that can be found in the LICENSE file.
 
-// Package xujiajun/gorouter is a simple and fast HTTP router for Go. It is easy to build RESTful APIs and your web framework.
+// Package gorouter is a simple and fast HTTP router for Go. It is easy to build RESTful APIs and your web framework.
 //
 // Here is the example:
 //
