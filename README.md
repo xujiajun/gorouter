@@ -351,6 +351,8 @@ The syntax here is modeled after [julienschmidt/httprouter](https://github.com/j
 
 And `:id` is short for `{id:[0-9]+}`, `:name` are short for `{name:[0-9a-zA-Z_]+}`
 
+> if use default regex checks unless you know what you're doing
+
  
 ## Benchmarks
 
