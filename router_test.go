@@ -31,7 +31,7 @@ func TestRouter_GET(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	router.GET("/hi", func(w http.ResponseWriter, request *http.Request) {
+	router.GET("/hi", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, expected)
 	})
 	router.ServeHTTP(rr, req)
@@ -52,7 +52,7 @@ func TestRouter_POST(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	router.POST("/hi", func(w http.ResponseWriter, request *http.Request) {
+	router.POST("/hi", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, expected)
 	})
 	router.ServeHTTP(rr, req)
@@ -73,7 +73,7 @@ func TestRouter_DELETE(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	router.DELETE("/hi", func(w http.ResponseWriter, request *http.Request) {
+	router.DELETE("/hi", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, expected)
 	})
 	router.ServeHTTP(rr, req)
@@ -94,7 +94,7 @@ func TestRouter_PATCH(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	router.PATCH("/hi", func(w http.ResponseWriter, request *http.Request) {
+	router.PATCH("/hi", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, expected)
 	})
 	router.ServeHTTP(rr, req)
@@ -115,7 +115,7 @@ func TestRouter_PUT(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	router.PUT("/hi", func(w http.ResponseWriter, request *http.Request) {
+	router.PUT("/hi", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, expected)
 	})
 	router.ServeHTTP(rr, req)
@@ -139,7 +139,7 @@ func TestRouter_Group(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	router.Group(prefix).GET("/hi", func(w http.ResponseWriter, request *http.Request) {
+	router.Group(prefix).GET("/hi", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, expected)
 	})
 	router.ServeHTTP(rr, req)
@@ -162,12 +162,12 @@ func TestRouter_CustomHandleNotFound(t *testing.T) {
 	}
 
 	customNotFoundStr := "404 page !"
-	router.NotFoundFunc(func(w http.ResponseWriter, request *http.Request) {
+	router.NotFoundFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
 		fmt.Fprint(w, customNotFoundStr)
 	})
 
-	router.GET("/hi", func(w http.ResponseWriter, request *http.Request) {
+	router.GET("/hi", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, expected)
 	})
 	router.ServeHTTP(rr, req)
@@ -189,7 +189,7 @@ func TestRouter_HandleNotFound(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	router.GET("/aa", func(w http.ResponseWriter, request *http.Request) {
+	router.GET("/aa", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, expected)
 	})
 	router.ServeHTTP(rr, req)
@@ -210,11 +210,11 @@ func TestRouter_CustomPanicHandler(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	router.PanicHandler = func(w http.ResponseWriter, request *http.Request, err interface{}) {
+	router.PanicHandler = func(w http.ResponseWriter, r *http.Request, err interface{}) {
 		t.Log("received a panic", err)
 	}
 
-	router.GET("/aaa", func(w http.ResponseWriter, request *http.Request) {
+	router.GET("/aaa", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, expected)
 	})
 	router.ServeHTTP(rr, req)
@@ -279,8 +279,8 @@ func TestGetAllParamsMiss(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	router.GET("/param1", func(w http.ResponseWriter, r *http.Request) {
-		params := GetAllParams(r)
+	router.GET("/param1", func(w http.ResponseWriter, req *http.Request) {
+		params := GetAllParams(req)
 
 		if params != nil {
 			t.Fatal("TestGetAllParams test fail")
@@ -309,7 +309,7 @@ func TestRouter_Use(t *testing.T) {
 	}
 
 	router.Use(withLogging)
-	router.GET("/hi", func(w http.ResponseWriter, request *http.Request) {
+	router.GET("/hi", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, expected)
 	})
 	router.ServeHTTP(rr, req)
@@ -333,7 +333,7 @@ func TestRouter_UseForRoot(t *testing.T) {
 
 	router.Use(withLogging)
 	expected := "hi index"
-	router.GET("/", func(w http.ResponseWriter, request *http.Request) {
+	router.GET("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, expected)
 	})
 	router.ServeHTTP(rr, req)

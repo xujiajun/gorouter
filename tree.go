@@ -52,8 +52,8 @@ func NewTree() *Tree {
 }
 
 // Add use `pattern` 、handle、middleware stack as node register to tree
-func (tree *Tree) Add(pattern string, handle http.HandlerFunc, middleware ...MiddlewareType) {
-	var currentNode = tree.root
+func (t *Tree) Add(pattern string, handle http.HandlerFunc, middleware ...MiddlewareType) {
+	var currentNode = t.root
 
 	if pattern != currentNode.key {
 
@@ -84,15 +84,15 @@ func (tree *Tree) Add(pattern string, handle http.HandlerFunc, middleware ...Mid
 	currentNode.isPattern = true
 	currentNode.path = pattern
 
-	if routeName := tree.parameters.routeName; routeName != "" {
-		tree.routes[routeName] = currentNode
+	if routeName := t.parameters.routeName; routeName != "" {
+		t.routes[routeName] = currentNode
 	}
 }
 
 // Find returns nodes that the request match the route pattern
-func (tree *Tree) Find(pattern string, isRegex bool) (nodes []*Node) {
+func (t *Tree) Find(pattern string, isRegex bool) (nodes []*Node) {
 	var (
-		node  = tree.root
+		node  = t.root
 		queue []*Node
 	)
 
