@@ -327,16 +327,16 @@ func (r *Router) Match(requestUrl string, path string) bool {
 }
 
 // matchAndParse checks if the request matches the route path and returns a map of the parsed
-func (r *Router) matchAndParse(requestUrl string, path string) (paramsMapType, bool) {
-	res := strings.Split(path, "/")
-
+func (r *Router) matchAndParse(requestUrl string, path string) (matchParams paramsMapType, b bool) {
 	var (
 		matchName []string
-		sTemp     string
+		pattern   string
 	)
 
-	matchParams := make(paramsMapType)
+	b = true
+	matchParams = make(paramsMapType)
 
+	res := strings.Split(path, "/")
 	for _, str := range res {
 		if str == "" {
 			continue
@@ -350,31 +350,29 @@ func (r *Router) matchAndParse(requestUrl string, path string) (paramsMapType, b
 			matchStr := string(str[1 : strLen-1])
 			res := strings.Split(matchStr, ":")
 			matchName = append(matchName, res[0])
-			sTemp = sTemp + "/" + "(" + res[1] + ")"
+			pattern = pattern + "/" + "(" + res[1] + ")"
 		} else if string(firstChar) == ":" {
 			matchStr := str
 			res := strings.Split(matchStr, ":")
 			matchName = append(matchName, res[1])
 			if res[1] == idKey {
-				sTemp = sTemp + "/" + "(" + idPattern + ")"
+				pattern = pattern + "/" + "(" + idPattern + ")"
 			} else {
-				sTemp = sTemp + "/" + "(" + defaultPattern + ")"
+				pattern = pattern + "/" + "(" + defaultPattern + ")"
 			}
 		} else {
-			sTemp = sTemp + "/" + str
+			pattern = pattern + "/" + str
 		}
 	}
 
-	pattern := sTemp
 	re := regexp.MustCompile(pattern)
-	subMatch := re.FindSubmatch([]byte(requestUrl))
-	if subMatch != nil {
+	if subMatch := re.FindSubmatch([]byte(requestUrl)); subMatch != nil {
 		if string(subMatch[0]) == requestUrl {
 			subMatch = subMatch[1:]
 			for k, v := range subMatch {
 				matchParams[matchName[k]] = string(v)
 			}
-			return matchParams, true
+			return
 		}
 	}
 
