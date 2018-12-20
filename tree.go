@@ -56,26 +56,21 @@ func (t *Tree) Add(pattern string, handle http.HandlerFunc, middleware ...Middle
 	var currentNode = t.root
 
 	if pattern != currentNode.key {
-
 		pattern = trimPathPrefix(pattern)
 		res := splitPattern(pattern)
-
 		for _, key := range res {
 			node, ok := currentNode.children[key]
-
 			if !ok {
 				node = NewNode(key, currentNode.depth+1)
 				if len(middleware) > 0 {
 					node.middleware = append(node.middleware, middleware...)
 				}
-
 				currentNode.children[key] = node
 			}
-
 			currentNode = node
 		}
-
 	}
+
 	if len(middleware) > 0 && currentNode.depth == 1 {
 		currentNode.middleware = append(currentNode.middleware, middleware...)
 	}
