@@ -167,7 +167,6 @@ func (r *Router) Generate(method string, routeName string, params map[string]str
 
 		if string(segment[0]) == "{" {
 			segmentLen := len(segment)
-
 			if string(segment[segmentLen-1]) == "}" {
 				splitRes := strings.Split(string(segment[1:segmentLen-1]), ":")
 				re := regexp.MustCompile(splitRes[1])
@@ -211,9 +210,11 @@ func (r *Router) Handle(method string, path string, handle http.HandlerFunc) {
 	if r.prefix != "" {
 		path = r.prefix + "/" + path
 	}
+
 	if routeName := r.parameters.routeName; routeName != "" {
 		tree.parameters.routeName = routeName
 	}
+
 	tree.Add(path, handle, r.middleware...)
 }
 
@@ -233,8 +234,7 @@ type paramsMapType map[string]string
 
 // GetAllParams returns all route params stored in http.Request.
 func GetAllParams(r *http.Request) paramsMapType {
-	values, ok := r.Context().Value(contextKey).(paramsMapType)
-	if ok {
+	if values, ok := r.Context().Value(contextKey).(paramsMapType); ok {
 		return values
 	}
 
@@ -278,10 +278,7 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		prefix := res[1]
 		nodes := r.trees[req.Method].Find(prefix, true)
 		for _, node := range nodes {
-			handler := node.handle
-
-			if handler != nil && node.path != requestUrl {
-
+			if handler := node.handle; handler != nil && node.path != requestUrl {
 				if matchParamsMap, ok := r.matchAndParse(requestUrl, node.path); ok {
 					ctx := context.WithValue(req.Context(), contextKey, matchParamsMap)
 					req = req.WithContext(ctx)
@@ -308,6 +305,7 @@ func (r *Router) HandleNotFound(w http.ResponseWriter, req *http.Request, middle
 		handle(w, req, r.notFound, middleware)
 		return
 	}
+
 	http.NotFound(w, req)
 }
 
@@ -317,6 +315,7 @@ func handle(w http.ResponseWriter, req *http.Request, handler http.HandlerFunc, 
 	for _, m := range middleware {
 		baseHandler = m(baseHandler)
 	}
+
 	baseHandler(w, req)
 }
 
@@ -345,7 +344,6 @@ func (r *Router) matchAndParse(requestUrl string, path string) (matchParams para
 		strLen := len(str)
 		firstChar := str[0]
 		lastChar := str[strLen-1]
-
 		if string(firstChar) == "{" && string(lastChar) == "}" {
 			matchStr := string(str[1 : strLen-1])
 			res := strings.Split(matchStr, ":")
