@@ -447,7 +447,7 @@ In the end, as julienschmidt said `performance can not be the (only) criterion f
 
 ## Contributing
 
-If you'd like to help out with the project. You can put up a Pull Request.
+If you'd like to help out with the project. You can put up a Pull Request. Thanks to all [contributors](https://github.com/xujiajun/gorouter/graphs/contributors).
 
 ## Author
 
