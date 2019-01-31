@@ -433,15 +433,15 @@ ok  	github.com/xujiajun/gorouter	15.918s
 
 ### Conclusions:
 
-* Performance (xujiajun/gorouter,julienschmidt/httprouter and teambition/trie-mux is fast)
+* Performance (xujiajun/gorouter,julienschmidt/httprouter and teambition/trie-mux are fast)
 
-* Memory Consumption (xujiajun/gorouter and julienschmidt/httprouter is fewer) 
+* Memory Consumption (xujiajun/gorouter and julienschmidt/httprouter are fewer) 
 
-* Features (julienschmidt/httprouter not support regexp，but others support it)
+* Features (julienschmidt/httprouter not supports regexp，but others support it)
 
-> if you want a high performance router which support regexp, maybe [xujiajun/gorouter](https://github.com/xujiajun/gorouter) is good choice.
+> if you want a high performance router which supports regexp, maybe [xujiajun/gorouter](https://github.com/xujiajun/gorouter) is good choice.
 
-> if you want a high performance router which not support regexp, maybe [julienschmidt/httprouter](https://github.com/julienschmidt/httprouter) is good choice.
+> if you want a high performance router which not supports regexp, maybe [julienschmidt/httprouter](https://github.com/julienschmidt/httprouter) is good choice.
 
 In the end, as julienschmidt said `performance can not be the (only) criterion for choosing a router. Play around a bit with some of the routers, and choose the one you like best.`
 
