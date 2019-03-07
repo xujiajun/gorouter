@@ -254,7 +254,8 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if _, ok := r.trees[req.Method]; !ok {
-		panic(fmt.Errorf("Error method or method is not registered "))
+		r.HandleNotFound(w, req, r.middleware)
+		return
 	}
 
 	nodes := r.trees[req.Method].Find(requestUrl, false)
