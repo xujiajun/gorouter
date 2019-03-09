@@ -1,4 +1,4 @@
-# gorouter  [![GoDoc](https://godoc.org/github.com/xujiajun/gorouter?status.svg)](https://godoc.org/github.com/xujiajun/gorouter) <a href="https://travis-ci.org/xujiajun/gorouter"><img src="https://travis-ci.org/xujiajun/gorouter.svg?branch=master" alt="Build Status"></a> [![Go Report Card](https://goreportcard.com/badge/github.com/xujiajun/gorouter)](https://goreportcard.com/report/github.com/xujiajun/gorouter) [![Coverage Status](https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_100.svg)](https://coveralls.io/github/xujiajun/gorouter?branch=master) [![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/xujiajun/gorouter/master/LICENSE)  [![Release](https://img.shields.io/badge/release-v1.1.0-blue.svg?style=flat-square)](https://github.com/xujiajun/gorouter/releases/tag/v1.0.1) [![Awesome](https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg)](https://github.com/avelino/awesome-go#routers) 
+# gorouter  [![GoDoc](https://godoc.org/github.com/xujiajun/gorouter?status.svg)](https://godoc.org/github.com/xujiajun/gorouter) <a href="https://travis-ci.org/xujiajun/gorouter"><img src="https://travis-ci.org/xujiajun/gorouter.svg?branch=master" alt="Build Status"></a> [![Go Report Card](https://goreportcard.com/badge/github.com/xujiajun/gorouter)](https://goreportcard.com/report/github.com/xujiajun/gorouter) [![Coverage Status](https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_100.svg)](https://coveralls.io/github/xujiajun/gorouter?branch=master) [![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/xujiajun/gorouter/master/LICENSE)  [![Release](https://img.shields.io/badge/release-v1.1.0-blue.svg?style=flat-square)](https://github.com/xujiajun/gorouter/releases/tag/v1.0.1) [![Awesome](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go#routers) 
 `xujiajun/gorouter` is a simple and fast HTTP router for Go. It is easy to build RESTful APIs and your web framework.
 
 ## Motivation
@@ -433,21 +433,21 @@ ok  	github.com/xujiajun/gorouter	15.918s
 
 ### Conclusions:
 
-* Performance (xujiajun/gorouter,julienschmidt/httprouter and teambition/trie-mux is fast)
+* Performance (xujiajun/gorouter,julienschmidt/httprouter and teambition/trie-mux are fast)
 
-* Memory Consumption (xujiajun/gorouter and julienschmidt/httprouter is fewer) 
+* Memory Consumption (xujiajun/gorouter and julienschmidt/httprouter are fewer) 
 
-* Features (julienschmidt/httprouter not support regexp，but others support it)
+* Features (julienschmidt/httprouter not supports regexp，but others support it)
 
-> if you want a high performance router which support regexp, maybe [xujiajun/gorouter](https://github.com/xujiajun/gorouter) is good choice.
+> if you want a high performance router which supports regexp, maybe [xujiajun/gorouter](https://github.com/xujiajun/gorouter) is good choice.
 
-> if you want a high performance router which not support regexp, maybe [julienschmidt/httprouter](https://github.com/julienschmidt/httprouter) is good choice.
+> if you want a high performance router which not supports regexp, maybe [julienschmidt/httprouter](https://github.com/julienschmidt/httprouter) is good choice.
 
 In the end, as julienschmidt said `performance can not be the (only) criterion for choosing a router. Play around a bit with some of the routers, and choose the one you like best.`
 
 ## Contributing
 
-If you'd like to help out with the project. You can put up a Pull Request.
+If you'd like to help out with the project. You can put up a Pull Request. Thanks to all [contributors](https://github.com/xujiajun/gorouter/graphs/contributors).
 
 ## Author
 
