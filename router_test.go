@@ -214,9 +214,26 @@ func TestRouter_CustomPanicHandler(t *testing.T) {
 		t.Log("received a panic", err)
 	}
 
+	router.POST("/aaa", func(w http.ResponseWriter, r *http.Request) {
+		panic("err")
+		fmt.Fprint(w, expected)
+	})
+	router.ServeHTTP(rr, req)
+}
+
+func TestRouter_NotFoundMethod(t *testing.T) {
+	router := New()
+	rr := httptest.NewRecorder()
+
+	req, err := http.NewRequest(http.MethodPost, "/aaa", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	router.GET("/aaa", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprint(w, expected)
 	})
+
 	router.ServeHTTP(rr, req)
 }
 
