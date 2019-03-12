@@ -356,6 +356,8 @@ And `:id` is short for `{id:[0-9]+}`, `:name` are short for `{name:[0-9a-zA-Z_]+
  
 ## Benchmarks
 
+the benchmarks code for gorouter be found in the [gorouter-bench](https://github.com/xujiajun/gorouter-bench) repository.
+
 > go test -bench=.
 
 ### Benchmark System:
