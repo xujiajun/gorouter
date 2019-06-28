@@ -20,8 +20,9 @@ func main() {
 	mux := gorouter.New()
 
 	//users group
-	mux.Group("/users").GET("/:user/events", usersEventHandler)
-	mux.Group("/users").GET("/:user/events/public", usersEventPublicHandler)
+	groupUsers := mux.Group("/users")
+	groupUsers.GET("/:user/events", usersEventHandler)
+	groupUsers.GET("/:user/events/public", usersEventPublicHandler)
 
 	log.Fatal(http.ListenAndServe(":8181", mux))
 }
