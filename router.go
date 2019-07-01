@@ -364,6 +364,10 @@ func (r *Router) matchAndParse(requestUrl string, path string) (matchParams para
 		}
 	}
 
+	if strings.HasSuffix(requestUrl, "/") {
+		pattern = pattern + "/"
+	}
+
 	re := regexp.MustCompile(pattern)
 	if subMatch := re.FindSubmatch([]byte(requestUrl)); subMatch != nil {
 		if string(subMatch[0]) == requestUrl {
