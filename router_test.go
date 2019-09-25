@@ -149,6 +149,27 @@ func TestRouter_PUT(t *testing.T) {
 	}
 }
 
+func TestRouter_HEAD(t *testing.T) {
+	router := New()
+	rr := httptest.NewRecorder()
+
+	req, err := http.NewRequest(http.MethodHead, "/hi", nil)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	router.HEAD("/hi", func(w http.ResponseWriter, r *http.Request) {
+		fmt.Fprint(w, expected)
+	})
+	router.ServeHTTP(rr, req)
+
+	if rr.Body.String() != expected {
+		t.Errorf(errorFormat,
+			rr.Body.String(), expected)
+	}
+}
+
 func TestRouter_Group(t *testing.T) {
 	router := New()
 
@@ -239,7 +260,6 @@ func TestRouter_CustomPanicHandler(t *testing.T) {
 
 	router.POST("/aaa", func(w http.ResponseWriter, r *http.Request) {
 		panic("err")
-		fmt.Fprint(w, expected)
 	})
 	router.ServeHTTP(rr, req)
 }
@@ -465,30 +485,30 @@ func TestRouter_HandlePanic(t *testing.T) {
 
 func TestRouter_Match(t *testing.T) {
 	router := New()
-	requestUrl := "/xxx/1/yyy/2"
+	requestURL := "/xxx/1/yyy/2"
 
-	ok := router.Match(requestUrl, "/xxx/:param1/yyy/:param2")
+	ok := router.Match(requestURL, "/xxx/:param1/yyy/:param2")
 
 	if !ok {
 		t.Fatal("TestRouter_Match test fail")
 	}
 
-	errorRequestUrl := "#xxx#1#yyy#2"
-	ok = router.Match(errorRequestUrl, "/xxx/:param1/yyy/:param2")
+	errorRequestURL := "#xxx#1#yyy#2"
+	ok = router.Match(errorRequestURL, "/xxx/:param1/yyy/:param2")
 
 	if ok {
 		t.Fatal("TestRouter_Match test fail")
 	}
 
 	errorPath := "#xxx#1#yyy#2"
-	ok = router.Match(requestUrl, errorPath)
+	ok = router.Match(requestURL, errorPath)
 
 	if ok {
 		t.Fatal("TestRouter_Match test fail")
 	}
 
-	missRequestUrl := "/xxx/1/yyy/###"
-	ok = router.Match(missRequestUrl, "/xxx/:param1/yyy/:param2")
+	missRequestURL := "/xxx/1/yyy/###"
+	ok = router.Match(missRequestURL, "/xxx/:param1/yyy/:param2")
 
 	if ok {
 		t.Fatal("TestRouter_Match test fail")
@@ -610,6 +630,19 @@ func TestRouter_Generate(t *testing.T) {
 
 	//cannot found method in tree
 	if _, err := mux.Generate("METHOD", routeName5, params); err == nil {
+		t.Fatal("TestRouter_Generate test fail")
+	}
+
+	routeName8 := "user_event"
+	params = make(map[string]string)
+	params["user"] = "xujiajun"
+
+	//HEADAndName
+	mux.HEADAndName("/users/:user/events", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("/users/:user/events"))
+	}, routeName8)
+
+	if url, _ := mux.Generate(http.MethodHead, routeName1, params); url != "/users/xujiajun/events" {
 		t.Fatal("TestRouter_Generate test fail")
 	}
 }
