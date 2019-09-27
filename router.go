@@ -36,6 +36,7 @@ var (
 		http.MethodPut:    {},
 		http.MethodDelete: {},
 		http.MethodPatch:  {},
+		http.MethodHead:   {},
 	}
 )
 
@@ -101,6 +102,12 @@ func (r *Router) PATCH(path string, handle http.HandlerFunc) {
 	r.Handle(http.MethodPatch, path, handle)
 }
 
+// HEAD adds the route `path` that matches a HEAD http method to
+// execute the `handle` http.HandlerFunc.
+func (r *Router) HEAD(path string, handle http.HandlerFunc) {
+	r.Handle(http.MethodHead, path, handle)
+}
+
 // GETAndName is short for `GET` and Named routeName
 func (r *Router) GETAndName(path string, handle http.HandlerFunc, routeName string) {
 	r.parameters.routeName = routeName
@@ -129,6 +136,12 @@ func (r *Router) PUTAndName(path string, handle http.HandlerFunc, routeName stri
 func (r *Router) PATCHAndName(path string, handle http.HandlerFunc, routeName string) {
 	r.parameters.routeName = routeName
 	r.PATCH(path, handle)
+}
+
+// HEADAndName is short for `HEAD` and Named routeName
+func (r *Router) HEADAndName(path string, handle http.HandlerFunc, routeName string) {
+	r.parameters.routeName = routeName
+	r.HEAD(path, handle)
 }
 
 // Group define routes groups if there is a path prefix that uses `prefix`
@@ -243,7 +256,7 @@ func GetAllParams(r *http.Request) paramsMapType {
 
 // ServeHTTP makes the router implement the http.Handler interface.
 func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	requestUrl := req.URL.Path
+	requestURL := req.URL.Path
 
 	if r.PanicHandler != nil {
 		defer func() {
@@ -258,16 +271,16 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	nodes := r.trees[req.Method].Find(requestUrl, false)
+	nodes := r.trees[req.Method].Find(requestURL, false)
 	if len(nodes) > 0 {
 		node := nodes[0]
 
 		if node.handle != nil {
-			if node.path == requestUrl {
+			if node.path == requestURL {
 				handle(w, req, node.handle, node.middleware)
 				return
 			}
-			if node.path == requestUrl[1:] {
+			if node.path == requestURL[1:] {
 				handle(w, req, node.handle, node.middleware)
 				return
 			}
@@ -275,12 +288,12 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if len(nodes) == 0 {
-		res := strings.Split(requestUrl, "/")
+		res := strings.Split(requestURL, "/")
 		prefix := res[1]
 		nodes := r.trees[req.Method].Find(prefix, true)
 		for _, node := range nodes {
-			if handler := node.handle; handler != nil && node.path != requestUrl {
-				if matchParamsMap, ok := r.matchAndParse(requestUrl, node.path); ok {
+			if handler := node.handle; handler != nil && node.path != requestURL {
+				if matchParamsMap, ok := r.matchAndParse(requestURL, node.path); ok {
 					ctx := context.WithValue(req.Context(), contextKey, matchParamsMap)
 					req = req.WithContext(ctx)
 					handle(w, req, handler, node.middleware)
@@ -321,13 +334,13 @@ func handle(w http.ResponseWriter, req *http.Request, handler http.HandlerFunc, 
 }
 
 // Match checks if the request matches the route pattern
-func (r *Router) Match(requestUrl string, path string) bool {
-	_, ok := r.matchAndParse(requestUrl, path)
+func (r *Router) Match(requestURL string, path string) bool {
+	_, ok := r.matchAndParse(requestURL, path)
 	return ok
 }
 
 // matchAndParse checks if the request matches the route path and returns a map of the parsed
-func (r *Router) matchAndParse(requestUrl string, path string) (matchParams paramsMapType, b bool) {
+func (r *Router) matchAndParse(requestURL string, path string) (matchParams paramsMapType, b bool) {
 	var (
 		matchName []string
 		pattern   string
@@ -364,13 +377,13 @@ func (r *Router) matchAndParse(requestUrl string, path string) (matchParams para
 		}
 	}
 
-	if strings.HasSuffix(requestUrl, "/") {
+	if strings.HasSuffix(requestURL, "/") {
 		pattern = pattern + "/"
 	}
 
 	re := regexp.MustCompile(pattern)
-	if subMatch := re.FindSubmatch([]byte(requestUrl)); subMatch != nil {
-		if string(subMatch[0]) == requestUrl {
+	if subMatch := re.FindSubmatch([]byte(requestURL)); subMatch != nil {
+		if string(subMatch[0]) == requestURL {
 			subMatch = subMatch[1:]
 			for k, v := range subMatch {
 				matchParams[matchName[k]] = string(v)
